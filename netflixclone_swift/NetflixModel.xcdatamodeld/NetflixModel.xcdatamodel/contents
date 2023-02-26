@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21513" systemVersion="22D68" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="DownloadedFilms" representedClassName="DownloadedFilms" syncable="YES" codeGenerationType="class">
+        <attribute name="downloadedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="film" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="FilmItem"/>
+    </entity>
+    <entity name="FilmItem" representedClassName="FilmItem" syncable="YES" codeGenerationType="class">
+        <attribute name="genre_ids" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformerName" customClassName="[Int]"/>
+        <attribute name="id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="media_type" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="original_name" optional="YES" attributeType="String"/>
+        <attribute name="original_title" optional="YES" attributeType="String"/>
+        <attribute name="overview" optional="YES" attributeType="String"/>
+        <attribute name="poster_path" optional="YES" attributeType="String"/>
+        <attribute name="release_date" optional="YES" attributeType="String"/>
+        <attribute name="title" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="MyListFilms" representedClassName="MyListFilms" syncable="YES" codeGenerationType="class">
+        <attribute name="added_date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="film" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="FilmItem"/>
+    </entity>
+    <entity name="RemindMeFilms" representedClassName="RemindMeFilms" syncable="YES" codeGenerationType="class">
+        <attribute name="hadReleased" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <relationship name="film" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="FilmItem"/>
+    </entity>
+</model>
