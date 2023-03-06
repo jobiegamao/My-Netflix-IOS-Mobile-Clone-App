@@ -38,7 +38,7 @@ class VideoTabView: UIView {
 		addSubview(logoImageView)
 		//put buttons in stack
 		let stack = UIStackView(arrangedSubviews: buttons)
-		stack.spacing = 1
+		stack.spacing = 40
 		stack.alignment = .trailing
 		stack.translatesAutoresizingMaskIntoConstraints = false
 		
@@ -51,7 +51,7 @@ class VideoTabView: UIView {
 			logoImageView.trailingAnchor.constraint(lessThanOrEqualTo: stack.leadingAnchor),
 			
 			stack.topAnchor.constraint(equalTo: topAnchor),
-			stack.trailingAnchor.constraint(equalTo: trailingAnchor),
+			stack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -5),
 			stack.bottomAnchor.constraint(equalTo: bottomAnchor),
 			
 		])

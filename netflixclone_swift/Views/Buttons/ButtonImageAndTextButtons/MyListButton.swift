@@ -16,12 +16,12 @@ class MyListButton: ButtonImageAndText {
 		iconImageView.transform = self.iconImageView.transform.scaledBy(x: 1.5, y: 1.5)
 		
 		setImage(UIImage(systemName: "checkmark"), for: .selected)
-		addTarget(self, action: #selector(downloadAction), for: .touchUpInside)
+		addTarget(self, action: #selector(MyListAction), for: .touchUpInside)
 	}
 	
-	@objc private func downloadAction() {
+	@objc private func MyListAction() {
 //		guard let filmModel = self.filmModel else {return}
-		print("downloadAction")
+		print("MyListAction")
 //		DataPersistenceManager.shared.downloadFilmWith(model: filmModel) { result in
 //			switch result {
 //				case .success():

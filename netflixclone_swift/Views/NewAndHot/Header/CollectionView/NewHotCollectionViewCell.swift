@@ -39,6 +39,7 @@ class NewHotCollectionViewCell: UICollectionViewCell {
 		return label
 	}()
 	
+	
 	lazy var labelView: UIView = {
 		let lv = UIView()
 		lv.translatesAutoresizingMaskIntoConstraints = false
@@ -71,6 +72,29 @@ class NewHotCollectionViewCell: UICollectionViewCell {
 		return indic
 	}()
 	
+	
+	// MARK: - Main
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+		
+		contentView.addSubview(indicatorView)
+		contentView.addSubview(labelView)
+		
+		applyConstraints()
+	}
+
+	override func layoutSubviews() {
+		super.layoutSubviews()
+		configureSelectedStatus()
+	}
+	
+	// MARK: - Public Configure Method
+	public func configure(with sectionItem: Section) {
+		titleLabel.text = sectionItem.title
+		imageView.image = UIImage(named: sectionItem.icon)
+	}
+	
+	// MARK: - Private Methods
 	private func configureSelectedStatus(){
 		if isSelected {
 			indicatorView.backgroundColor = .label
@@ -81,20 +105,7 @@ class NewHotCollectionViewCell: UICollectionViewCell {
 		}
 	}
 	
-	public func configure(with sectionItem: Section) {
-		titleLabel.text = sectionItem.title
-		imageView.image = UIImage(named: sectionItem.icon)
-	}
-		
-	// MARK: Init
-	override init(frame: CGRect) {
-		super.init(frame: frame)
-		
-		contentView.addSubview(indicatorView)
-		contentView.addSubview(labelView)
-		
-
-		
+	private func applyConstraints(){
 		NSLayoutConstraint.activate([
 		   labelView.topAnchor.constraint(equalTo: contentView.topAnchor),
 		   labelView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
@@ -108,12 +119,6 @@ class NewHotCollectionViewCell: UICollectionViewCell {
 		   indicatorView.leadingAnchor.constraint(equalTo: leadingAnchor),
 		   indicatorView.trailingAnchor.constraint(equalTo: trailingAnchor)
 	   ])
-	}
-
-
-	override func layoutSubviews() {
-		super.layoutSubviews()
-		configureSelectedStatus()
 	}
 
 	required init?(coder: NSCoder) {

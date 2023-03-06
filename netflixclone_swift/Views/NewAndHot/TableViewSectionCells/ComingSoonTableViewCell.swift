@@ -8,15 +8,10 @@
 import UIKit
 import WebKit
 
-protocol ComingSoonTableViewCellDelegate: AnyObject {
-	func didTapInfoButton(forFilm film: Film)
-}
 
 class ComingSoonTableViewCell: UITableViewCell {
 
 	static let identifier = "ComingSoonTableViewCell"
-	
-	weak var delegate: ComingSoonTableViewCellDelegate?
 	
 	private let reusable = NewHotReusableViews()
 	private lazy var webView = reusable.webView
@@ -143,9 +138,3 @@ class ComingSoonTableViewCell: UITableViewCell {
 	}
 }
 
-//extension ComingSoonTableViewCell: InfoButtonDelegate {
-//	func didTapInfo(forFilm film: Film) {
-//		delegate?.didTapInfoButton(forFilm: film)
-//	}
-//	
-//}

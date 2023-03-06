@@ -34,11 +34,11 @@ class FilmTableViewCell: UITableViewCell {
 			filmPosterImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15),
 			filmPosterImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 15),
 			filmPosterImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -15),
-			filmPosterImageView.widthAnchor.constraint(equalToConstant: 100),
+			filmPosterImageView.widthAnchor.constraint(equalToConstant: 180),
 		
 			filmPosterLabel.leadingAnchor.constraint(equalTo: filmPosterImageView.trailingAnchor, constant: 15),
 			filmPosterLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-			filmPosterLabel.widthAnchor.constraint(equalToConstant: 190),
+			filmPosterLabel.widthAnchor.constraint(equalToConstant: 120),
 			
 	
 			playFilmBtn.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
@@ -46,10 +46,12 @@ class FilmTableViewCell: UITableViewCell {
 		])
 	}
 	
-	public func configure(with model: FilmViewModel){
-		guard let url = URL(string: posterBaseURL + model.posterURL) else {return}
+	public func configure(with model: Film){
+		guard let backdrop_path = model.backdrop_path,
+			  let url = URL(string: posterBaseURL + backdrop_path )
+		else {return}
 		filmPosterImageView.sd_setImage(with: url)
-		filmPosterLabel.text = model.title
+		filmPosterLabel.text = model.title ?? model.name ?? model.original_name ?? model.original_title
 	}
 	
 	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

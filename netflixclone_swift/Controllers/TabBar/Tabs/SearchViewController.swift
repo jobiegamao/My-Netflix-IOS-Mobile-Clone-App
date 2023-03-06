@@ -67,10 +67,9 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
 	
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		guard let cell = tableView.dequeueReusableCell(withIdentifier: FilmTableViewCell.identifier, for: indexPath) as? FilmTableViewCell else { return UITableViewCell() }
-		let film = films[indexPath.row]
-		let filmTitle = film.name ?? film.title ?? film.original_name ?? film.original_title ?? "Unknown"
-		let model = FilmViewModel(title: filmTitle, posterURL: film.poster_path ?? "")
-		cell.configure(with: model)
+		let selectedFilm = films[indexPath.row]
+		cell.configure(with: selectedFilm)
+		
 		return cell
 	}
 	
@@ -117,7 +116,7 @@ extension SearchViewController: UISearchResultsUpdating, SearchResultsViewContro
 		}
 	}
 	
-	func searchResultsViewControllerDidTapCell(_ viewModel: FilmDetailsViewModel, model: Film) {
+	func searchResultsViewControllerDidTapCell(model: Film) {
 		DispatchQueue.main.async { [weak self] in
 			let vc =  FilmDetailsViewController()
 			vc.configure(model: model)

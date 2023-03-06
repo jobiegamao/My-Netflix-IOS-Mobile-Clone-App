@@ -18,6 +18,7 @@ class ButtonImageAndText: UIButton {
 		iconImageView.contentMode = .scaleAspectFit
 		iconImageView.tintColor = .label
 		iconImageView.translatesAutoresizingMaskIntoConstraints = false
+		iconImageView.clipsToBounds = true
 		
 		return iconImageView
 	}()
@@ -33,11 +34,14 @@ class ButtonImageAndText: UIButton {
 		return label
 	}()
 	
+	
+	
 	init(text: String, image: UIImage?, iconPlacement: Position = .top) {
 		super.init(frame: .zero)
 		
-		guard let image = image else { return }
-		iconImageView.image = image
+		if let image = image {
+			iconImageView.image = image
+		}
 
 		label.text = text
 		
@@ -57,10 +61,7 @@ class ButtonImageAndText: UIButton {
 		translatesAutoresizingMaskIntoConstraints = false
 		isUserInteractionEnabled = true
 		
-		
-		//button size
-		widthAnchor.constraint(equalToConstant: 80).isActive = true
-		heightAnchor.constraint(equalToConstant: 50).isActive = true
+		sizeToFit()
 
 	}
 	
@@ -75,15 +76,19 @@ class ButtonImageAndText: UIButton {
 			label.trailingAnchor.constraint(equalTo: trailingAnchor),
 			label.bottomAnchor.constraint(equalTo: bottomAnchor)
 		])
+
 	}
 	
 	private func iconOnLeft(){
 		NSLayoutConstraint.activate([
 			iconImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
 			iconImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
+			iconImageView.bottomAnchor.constraint(equalTo: bottomAnchor),
 			
 			label.centerYAnchor.constraint(equalTo: iconImageView.centerYAnchor),
 			label.leadingAnchor.constraint(equalTo: iconImageView.trailingAnchor, constant: 5),
+			label.trailingAnchor.constraint(equalTo: trailingAnchor),
+			label.bottomAnchor.constraint(equalTo: bottomAnchor),
 		])
 	}
 	

@@ -7,9 +7,14 @@
 
 import UIKit
 import FirebaseAuth
+import Combine
 
 class HomeViewController: UIViewController {
 	
+	private var viewModel = HomeViewViewModel()
+	private var subscriptions: Set<AnyCancellable> = []
+	
+	private var selectedProfile: UserProfile?
 	
 	private let homeTable: UITableView = {
 		let table = UITableView(frame: .zero, style: .grouped)
@@ -21,25 +26,84 @@ class HomeViewController: UIViewController {
 		return table
 	}()
 	
+	private lazy var profileBtn = {
+		let btn = ProfileButton()
+		btn.setImage(UIImage(systemName: "face.dashed.fill"), for: .normal)
+		btn.delegate = self
+		return btn
+	}()
+
+	
+	private let sectionHeader = ["Popular on Netflix",
+								 "Trending Shows",
+								 "Top picked Movies",
+								 "Upcoming"]
+	
+	
+	
+	// MARK: - Main
+    override func viewDidLoad() {
+        super.viewDidLoad()
+		view.backgroundColor = .systemBackground
+        
+		configureNavbar()
+		configureTable()
+		
+		bindViews()
+		
+		NotificationCenter.default.addObserver(forName: NSNotification.Name("selectedProfile"), object: nil, queue: nil) { _ in
+			self.viewModel.retreiveUser()
+		}
+		
+    }
+	
+	override func viewDidLayoutSubviews() {
+		super.viewDidLayoutSubviews()
+		homeTable.frame = view.bounds //same size to view
+	}
+	
+	override func viewWillAppear(_ animated: Bool) {
+		super.viewWillAppear(animated)
+		handleAuthentication()
+		viewModel.retreiveUser()
+		
+	}
+	
+	
+	// MARK: - Private Methods
+	
+	private func handleAuthentication(){
+	
+		if Auth.auth().currentUser == nil {
+			let vc = UINavigationController(rootViewController: OnboardingViewController())
+			vc.modalPresentationStyle = .fullScreen
+			present(vc, animated: false)
+		}
+		
+		
+	}
+	
 	private func configureNavbar(){
+		
+		//left
 		var image = UIImage(named: "netflixLogo")
 		image = image?.withRenderingMode(.alwaysOriginal) //use image as is
 		let logoBtn = UIBarButtonItem(image: image, style: .plain, target: self, action: nil)
 		logoBtn.imageInsets = UIEdgeInsets(top: 0, left: -39, bottom: -5, right: 0)
 		navigationItem.leftBarButtonItem = logoBtn
+		
+		//right
 		navigationItem.rightBarButtonItems = [
-			UIBarButtonItem(image: UIImage(systemName: "person"), style: .plain, target: self, action: nil),
+			UIBarButtonItem(customView: profileBtn),
 			UIBarButtonItem(image: UIImage(systemName: "magnifyingglass"), style: .plain, target: self, action: nil),
 			UIBarButtonItem(image: UIImage(systemName: "airplayvideo"), style: .plain, target: self, action: nil)
 		]
+		
 		navigationController?.navigationBar.tintColor = .label
 		
 	}
 	
-	private let sectionHeader = ["Popular on Netflix", "Trending Shows", "Top picked Movies", "Upcoming"]
-	
-	
-	func fetchListFromAPI(cell: HomeTableViewCell, category: Categories, media_type: MediaType, language: String = Language.English.rawValue, time_period: String = "day", page: Int = 1) {
+	private func fetchListFromAPI(cell: HomeTableViewCell, category: Categories, media_type: MediaType, language: String = Language.English.rawValue, time_period: String = "day", page: Int = 1) {
 		switch category {
 			case .Trending:
 				APICaller.shared.getTrending(media_type: media_type.rawValue, time_period: time_period) { results in
@@ -96,30 +160,22 @@ class HomeViewController: UIViewController {
 		homeTable.tableHeaderView = homeTableHeaderView
 	}
 	
-	
-	// MARK: Main()
-    override func viewDidLoad() {
-        super.viewDidLoad()
-		view.backgroundColor = .systemBackground
-        
-		configureNavbar()
-		configureTable()
-		
-    }
-	
-	override func viewDidLayoutSubviews() {
-		super.viewDidLayoutSubviews()
-		homeTable.frame = view.bounds //same size to view
-	}
-	
-	override func viewWillAppear(_ animated: Bool) {
-		super.viewWillAppear(animated)
-		// logout if no user account
-		if Auth.auth().currentUser == nil{
-			let vc = UINavigationController(rootViewController: OnboardingViewController()) 
-			vc.modalPresentationStyle = .fullScreen
-			present(vc, animated: false)
+	private func bindViews(){
+		viewModel.$user.sink { [weak self] user in
+			guard let user = user else{return}
+
+			guard let selectedProfile = AppSettings.selectedProfile else {
+				let vc = WhosWatchingViewController()
+				self?.present(vc, animated: true)
+				return
+			}
+			
+			let imageURL = URL(string: selectedProfile.userProfileIcon)
+			self?.profileBtn.sd_setImage(with: imageURL, for: .normal, placeholderImage: UIImage(systemName: "face.dashed.fill"), options: [.progressiveLoad])
+
 		}
+		.store(in: &subscriptions)
+
 	}
     
 }
@@ -129,10 +185,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
 	//whats in each cell row
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		
-		guard let cell = tableView.dequeueReusableCell(withIdentifier: HomeTableViewCell.identifier, for: indexPath) as? HomeTableViewCell else {
-			//if theres no collectionView cell then just return a plain table cell
-			return UITableViewCell()
-		}
+		guard let cell = tableView.dequeueReusableCell(withIdentifier: HomeTableViewCell.identifier, for: indexPath) as? HomeTableViewCell else {return UITableViewCell()}
 		
 		cell.delegate = self
 		
@@ -166,7 +219,6 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
 		return 1
 	}
 	
-//	 HEADER
 	
 	//header config
 	func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int){
@@ -188,9 +240,6 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
 	func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
 		return sectionHeader[section]
 	}
-	
-	
-	
 	
 	// SIZE of CELL
 	func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -217,14 +266,12 @@ extension HomeViewController: HomeTableViewCellDelegate{
 		}
 		
 	}
-	
-	func didTapInfoButton(forFilm film: Film) {
-		DispatchQueue.main.async { [weak self] in
-			let vc = FilmDetailsViewController()
-			vc.configure(model: film)
-			self?.present(vc, animated: true)
-			
-		}
+}
+
+extension HomeViewController: ProfileButtonDelegate {
+	func didTapProfileButton() {
+		let profileVC = ProfileViewController()
+		navigationController?.pushViewController(profileVC, animated: true)
 	}
 }
 

@@ -8,6 +8,10 @@
 import Foundation
 import UIKit
 
+struct AppSettings {
+	static var selectedProfile: UserProfile?
+}
+
 class GlobalMethods {
 	static let shared = GlobalMethods()
 

@@ -47,3 +47,9 @@ extension UIViewController {
 	return lastParent?.view.window?.windowScene?.screen
   }
 }
+
+extension UIView {
+	func removeAllSubviews() {
+		subviews.forEach { $0.removeFromSuperview() }
+	}
+}

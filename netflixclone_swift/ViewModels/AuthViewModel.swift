@@ -51,6 +51,7 @@ final class AuthViewModel: ObservableObject {
 				}
 			} receiveValue: { [weak self] user in
 				self?.saveUserInDB(for: user)
+				print("user saved in database!")
 			}
 			.store(in: &subscriptions)
 	}
@@ -61,10 +62,13 @@ final class AuthViewModel: ObservableObject {
 				if case .failure(let error) = result {
 					self?.error = error
 				}
-			} receiveValue: { bool in
+			} receiveValue: {[weak self] bool in
 				print("Adding user in db: \(bool)")
+				self?.createFirstProfile(for: user)
 			}
 			.store(in: &subscriptions)
+		
+		
 
 	}
 	
@@ -80,6 +84,24 @@ final class AuthViewModel: ObservableObject {
 			}
 			.store(in: &subscriptions)
 	}
+	
+	func createFirstProfile(for user: User){
+		let userAccount = UserAccount(from: user)
+		let firstProfileName = "Me"
+		let profile = UserProfile(user: userAccount, userID: userAccount.id, userProfileName: firstProfileName, userProfileIcon: "profileicon")
+		
+		DatabaseManager.shared.collectionUserProfiles(add: profile)
+			.sink { [weak self] result in
+				if case .failure(let error) = result {
+					self?.error = error
+				}
+			} receiveValue: { userProfileResult in
+				print(userProfileResult)
+				AppSettings.selectedProfile = userProfileResult
+			}
+			.store(in: &subscriptions)
+	}
+	
 }
 
 

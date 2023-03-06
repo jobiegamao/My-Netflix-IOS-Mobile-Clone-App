@@ -10,10 +10,18 @@ import SDWebImage
 
 class FilmCollectionViewCell: UICollectionViewCell {
   
+	// MARK: - Properties
 	static let identifier = "FilmCollectionViewCell"
-	
 	private let posterImageView = PosterImageView()
 	
+	
+	// MARK: - Main
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+		addSubview(posterImageView)
+	}
+	
+	// MARK: - Public Configure Method
 	func configure(with model: FilmViewModel){
 		guard let url = URL(string: posterBaseURL + model.posterURL) else {
 			print("error: FilmCollectionViewCell, configure()")
@@ -26,12 +34,6 @@ class FilmCollectionViewCell: UICollectionViewCell {
 			posterImageView.trailingAnchor.constraint(equalTo: trailingAnchor),
 			posterImageView.bottomAnchor.constraint(equalTo: bottomAnchor)
 		])
-	}
-	
-	// MARK: Init
-	override init(frame: CGRect) {
-		super.init(frame: frame)
-		addSubview(posterImageView)
 	}
 	
 	

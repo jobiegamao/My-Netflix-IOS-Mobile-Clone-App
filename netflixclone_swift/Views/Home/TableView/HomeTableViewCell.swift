@@ -10,17 +10,16 @@ import UIKit
 // add custom function when cell in collection is tapped, all actions should be in VC
 protocol HomeTableViewCellDelegate: AnyObject {
 	func homeTableViewCellDidTapCell(model: Film)
-	func didTapInfoButton(forFilm film: Film)
 }
 
 class HomeTableViewCell: UITableViewCell {
 
+	
     static let identifier = "HomeTableViewCell"
 	private var films: [Film] = [Film]()
 	// from protocol
 	weak var delegate: HomeTableViewCellDelegate?
-	
-	
+
 	// per row is a collectionview horizontal scroll
 	private let scrollingCollectionView: UICollectionView = {
 		let layout = UICollectionViewFlowLayout()
@@ -33,33 +32,9 @@ class HomeTableViewCell: UITableViewCell {
 		
 		return cv
 	}()
+		
 	
-	private func configureScrollCV(){
-		contentView.addSubview(scrollingCollectionView)
-		scrollingCollectionView.dataSource = self
-		scrollingCollectionView.delegate = self
-	}
-	
-	func configure(with films: [Film]){
-		self.films = films
-		DispatchQueue.main.async { [weak self] in
-			self?.scrollingCollectionView.reloadData()
-		}
-	}
-	
-	private func downloadAction(indexPath: IndexPath){
-		DataPersistenceManager.shared.downloadFilm(model: films[indexPath.row]) { result in
-			switch result {
-				case .success():
-					NotificationCenter.default.post(Notification(name: NSNotification.Name("downloaded")))
-				case .failure(let error):
-					print(error, "HomeTableViewCell, downloadAction() ")
-			}
-		}
-	}
-	
-	
-	// MARK: Init()
+	// MARK: - Main
 	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
 		super.init(style: style, reuseIdentifier: reuseIdentifier)
 		configureScrollCV()
@@ -71,6 +46,31 @@ class HomeTableViewCell: UITableViewCell {
 		scrollingCollectionView.frame = bounds
 	}
 	
+	// MARK: - Public Configure Method
+	func configure(with films: [Film]){
+		self.films = films
+		DispatchQueue.main.async { [weak self] in
+			self?.scrollingCollectionView.reloadData()
+		}
+	}
+	
+	// MARK: - Private Methods
+	private func downloadAction(indexPath: IndexPath){
+		DataPersistenceManager.shared.saveAsFilmItem(model: films[indexPath.row]) { result in
+			switch result {
+				case .success():
+					NotificationCenter.default.post(Notification(name: NSNotification.Name("downloaded")))
+				case .failure(let error):
+					print(error, "HomeTableViewCell, downloadAction() ")
+			}
+		}
+	}
+	
+	private func configureScrollCV(){
+		contentView.addSubview(scrollingCollectionView)
+		scrollingCollectionView.dataSource = self
+		scrollingCollectionView.delegate = self
+	}
 	
 	
 	required init(coder: NSCoder) {

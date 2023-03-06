@@ -66,7 +66,7 @@ extension UpcomingViewController: UITableViewDelegate, UITableViewDataSource {
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		guard let cell = tableView.dequeueReusableCell(withIdentifier: FilmTableViewCell.identifier, for: indexPath) as? FilmTableViewCell else { return UITableViewCell() }
 		
-		cell.configure(with: FilmViewModel(title: films[indexPath.row].title ?? films[indexPath.row].name ?? films[indexPath.row].original_title ?? "No Name", posterURL: films[indexPath.row].poster_path ?? "No Poster"))
+		cell.configure(with: films[indexPath.row])
 
 		return cell
 	}

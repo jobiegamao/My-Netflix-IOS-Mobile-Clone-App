@@ -1,0 +1,171 @@
+//
+//  ProfileViewController.swift
+//  netflixclone_swift
+//
+//  Created by may on 2/26/23.
+//
+
+import UIKit
+import FirebaseAuth
+import Combine
+
+class ProfileViewController: UIViewController {
+	
+	private var viewModel = ProfileViewViewModel()
+	private var subscriptions: Set<AnyCancellable> = []
+	
+	private var profileBtns = [UserProfileButton]()
+	
+	private var selectedProfile: UserProfile? {
+		didSet{
+			profileBtns.forEach{ btn in
+				if btn.userProfile?.id == selectedProfile?.id{
+					btn.iconImageView.layer.borderColor = UIColor.label.cgColor
+					btn.iconImageView.layer.borderWidth = 1
+				}else{
+					btn.iconImageView.layer.borderWidth = 0
+				}
+					
+			}
+		}
+	}
+	
+	private lazy var myProfilesView: UIStackView = {
+		let stack = UIStackView(frame: .zero)
+		stack.translatesAutoresizingMaskIntoConstraints = false
+		stack.alignment = .center
+		stack.distribution = .equalCentering
+		return stack
+	}()
+	
+	private lazy var manageProfileBtn: ButtonImageAndText = {
+		let btn = ButtonImageAndText(text: "Manage Profiles", image: UIImage(systemName: "square.and.pencil"), iconPlacement: .left)
+		btn.label.font = .systemFont(ofSize: 20, weight: .semibold)
+		btn.addTarget(self, action: #selector(didTapManageProfile), for: .touchUpInside)
+		return btn
+	}()
+	
+	private lazy var signOutBtn: UIButton = {
+		let btn = UIButton(type: .system)
+		btn.setTitle("Sign Out", for: .normal)
+		btn.setTitleColor(.label, for: .normal)
+		btn.titleLabel?.font = .systemFont(ofSize: 20, weight: .regular)
+		btn.translatesAutoresizingMaskIntoConstraints = false
+		
+		btn.addTarget(self, action: #selector(didTapSignOut), for: .touchUpInside)
+		return btn
+	}()
+	
+	private lazy var actionsView: UITableView = {
+		let table = UITableView()
+		table.translatesAutoresizingMaskIntoConstraints = false
+		return table
+	}()
+
+	// MARK: - Main
+    override func viewDidLoad() {
+        super.viewDidLoad()
+		view.backgroundColor = .systemBackground
+		title = "Profiles & More"
+		
+		view.addSubview(myProfilesView)
+		view.addSubview(manageProfileBtn)
+		view.addSubview(actionsView)
+		view.addSubview(signOutBtn)
+		
+		applyConstraints()
+		bindViews()
+		
+		NotificationCenter.default.addObserver(forName: NSNotification.Name("newProfileAdded"), object: nil, queue: nil) { _ in
+			self.viewModel.retreiveUser()
+		}
+    }
+	
+	override func viewWillAppear(_ animated: Bool) {
+		super.viewWillAppear(animated)
+		
+		viewModel.retreiveUser()
+		selectedProfile = AppSettings.selectedProfile
+		print("viewWillAppear")
+	}
+	
+	// MARK: - Private Methods
+	
+	
+	private func bindViews(){
+		
+		//when profile changes
+		viewModel.$profiles.sink { [weak self] profileArrayResult in
+			//empty everything first
+			self?.profileBtns.removeAll()
+			self?.myProfilesView.removeAllSubviews()
+			
+			//fill data
+			self?.profileBtns = profileArrayResult.map { [weak self] userProfile in
+				let btn = UserProfileButton(userProfile: userProfile)
+				btn.addTarget(self, action: #selector(self?.didTapProfileButton(_:)), for: .touchUpInside)
+				if userProfile.id == self?.selectedProfile?.id{
+					btn.iconImageView.layer.borderColor = UIColor.label.cgColor
+					btn.iconImageView.layer.borderWidth = 1
+				}else{
+					btn.iconImageView.layer.borderWidth = 0
+				}
+				
+				return btn
+			}
+			
+			self?.profileBtns.forEach { btn in
+				self?.myProfilesView.addArrangedSubview(btn)
+			}
+			
+		
+		}
+		.store(in: &subscriptions)
+		
+	}
+	
+	@objc private func didTapManageProfile(){
+		let vc = ManageProfilesViewController()
+		present(vc, animated: true)
+	}
+	
+	@objc private func didTapProfileButton(_ sender: UserProfileButton){
+		guard let userProfile = sender.userProfile  else { return  }
+		AppSettings.selectedProfile = userProfile
+		selectedProfile = userProfile
+	}
+	
+	private func applyConstraints(){
+		NSLayoutConstraint.activate([
+			myProfilesView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+			myProfilesView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+			myProfilesView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+			myProfilesView.heightAnchor.constraint(equalToConstant: 100),
+			
+			manageProfileBtn.topAnchor.constraint(equalTo: myProfilesView.bottomAnchor, constant: 15),
+			manageProfileBtn.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+			
+			actionsView.topAnchor.constraint(equalTo: manageProfileBtn.bottomAnchor, constant: 25),
+			actionsView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+			actionsView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+			actionsView.heightAnchor.constraint(equalToConstant: 300),
+			
+			signOutBtn.topAnchor.constraint(equalTo: actionsView.bottomAnchor, constant: 25),
+			signOutBtn.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+			
+		])
+	}
+	
+	@objc private func didTapSignOut(){
+		try? Auth.auth().signOut()
+		if Auth.auth().currentUser == nil {
+			let vc = OnboardingViewController()
+			let rootNavController = UINavigationController(rootViewController: vc)
+			rootNavController.modalPresentationStyle = .fullScreen
+			present(rootNavController, animated: false)
+		}
+	}
+	
+    
+
+}

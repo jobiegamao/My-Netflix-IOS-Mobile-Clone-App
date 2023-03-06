@@ -26,6 +26,12 @@ struct Film: Codable {
 	let backdrop_path: String?
 }
 
+extension FilmItem{
+	func FilmItemToFilm() -> Film{
+		return Film(id: Int(film_id), media_type: media_type, title: title, name: name, original_title: original_title, original_name: original_name, overview: overview, poster_path: poster_path, release_date: release_date, genre_ids: genre_ids, backdrop_path: backdrop_path ?? "")
+	}
+}
+
 
 /*
  adult = 0;

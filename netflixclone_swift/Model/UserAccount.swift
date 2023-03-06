@@ -11,8 +11,7 @@ import Firebase
 struct UserAccount: Codable {
 	let id: String
 	var createdOn: Date = Date()
-	var accountUsers: [String] = ["Me"]
-	var isUserSubscribed: Bool = false
+	var isUserSubscribed: Bool = true
 	var expirationDate: Date?
 	
 	//auto id from User Firebase
