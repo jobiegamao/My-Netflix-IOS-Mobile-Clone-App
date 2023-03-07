@@ -62,7 +62,7 @@ final class AddProfileViewViewModel: ProfileViewViewModel {
 
 		let profile = UserProfile(user: currentUser, userID: currentUser.id, userProfileName: displayName, userProfileIcon: avatarPath)
 		
-		DatabaseManager.shared.collectionUserProfiles(add: profile)
+		DatabaseManager.shared.collectionUsersProfiles(add: profile)
 			.sink { [weak self] result in
 				if case .failure(let error) = result {
 					self?.error = error

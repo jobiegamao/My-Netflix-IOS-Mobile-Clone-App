@@ -36,22 +36,29 @@ class Top10TableViewCell: UITableViewCell {
 		return lv
 	}()
 	
-	private func configureTabView(model: Film){
-		let btn1 = ShareButton()
-		btn1.filmModel = model
-		let btn2 = MyListButton()
-		btn2.filmModel = model
-		let btn3 = PlaySmallButton()
-		btn3.filmModel = model
+	private let btn1 = ShareButton()
+	private let btn2 = MyListButton()
+	private let btn3 = PlaySmallButton()
+	
+	// MARK: - Main
+	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+		super.init(style: style, reuseIdentifier: reuseIdentifier)
+		contentView.addSubview(leftView)
+		contentView.addSubview(webView)
+		contentView.addSubview(placeholderImageView)
+		contentView.addSubview(tabView)
+		contentView.addSubview(titleLabel)
+		contentView.addSubview(descriptionLabel)
+		contentView.addSubview(genreLabel)
 		
-		tabView.buttons = [
-			btn1, btn2, btn3
-		]
+		applyConstraints()
 		
 	}
 	
+	// MARK: - Public Configure Method
 	public func configureDetails(with model: Film, top position: Int){
 		configureTabView(model: model)
+		
 		let selectedTitle = model.name ?? model.title ?? model.original_title ?? model.original_name ?? "No Title"
 		
 		reusable.setWebViewRequest(selectedTitle: selectedTitle, model: model)
@@ -70,6 +77,20 @@ class Top10TableViewCell: UITableViewCell {
 
 	}
 	
+	func configureTabView(model: Film){
+		btn1.filmModel = model
+		
+		btn2.filmModel = model
+		
+		btn3.filmModel = model
+		
+		tabView.buttons = [
+			btn1, btn2, btn3
+		]
+		
+	}
+	
+	// MARK: - Private Methods
 	private func applyConstraints(){
 		NSLayoutConstraint.activate([
 			leftView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
@@ -108,20 +129,6 @@ class Top10TableViewCell: UITableViewCell {
 		])
 	}
 
-	
-	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-		super.init(style: style, reuseIdentifier: reuseIdentifier)
-		contentView.addSubview(leftView)
-		contentView.addSubview(webView)
-		contentView.addSubview(placeholderImageView)
-		contentView.addSubview(tabView)
-		contentView.addSubview(titleLabel)
-		contentView.addSubview(descriptionLabel)
-		contentView.addSubview(genreLabel)
-		
-		applyConstraints()
-		
-	}
 	
 	required init?(coder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")

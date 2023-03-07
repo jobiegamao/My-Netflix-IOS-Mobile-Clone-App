@@ -14,8 +14,6 @@ class HomeViewController: UIViewController {
 	private var viewModel = HomeViewViewModel()
 	private var subscriptions: Set<AnyCancellable> = []
 	
-	private var selectedProfile: UserProfile?
-	
 	private let homeTable: UITableView = {
 		let table = UITableView(frame: .zero, style: .grouped)
 		//table is groupstyle for header for each row
@@ -51,10 +49,6 @@ class HomeViewController: UIViewController {
 		
 		bindViews()
 		
-		NotificationCenter.default.addObserver(forName: NSNotification.Name("selectedProfile"), object: nil, queue: nil) { _ in
-			self.viewModel.retreiveUser()
-		}
-		
     }
 	
 	override func viewDidLayoutSubviews() {
@@ -65,7 +59,11 @@ class HomeViewController: UIViewController {
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 		handleAuthentication()
-		viewModel.retreiveUser()
+		viewModel.retrieveUser()
+		
+		if let selectedProfile = AppSettings.selectedProfile{
+			viewModel.currentUserProfile = selectedProfile
+		}
 		
 	}
 	
@@ -79,7 +77,6 @@ class HomeViewController: UIViewController {
 			vc.modalPresentationStyle = .fullScreen
 			present(vc, animated: false)
 		}
-		
 		
 	}
 	
@@ -162,19 +159,33 @@ class HomeViewController: UIViewController {
 	
 	private func bindViews(){
 		viewModel.$user.sink { [weak self] user in
-			guard let user = user else{return}
-
-			guard let selectedProfile = AppSettings.selectedProfile else {
-				let vc = WhosWatchingViewController()
-				self?.present(vc, animated: true)
-				return
+			if AppSettings.selectedProfile == nil {
+				guard let id =  UserDefaults.standard.string(forKey: AppSettings.selectedProfileIDForKey) else {
+					let vc = WhosWatchingViewController()
+					self?.present(vc, animated: true)
+					return
+				}
+				
+				self?.viewModel.retrieveCurrentUserProfile(profileID: id) { result in
+					switch result {
+						case .success(let userProfile):
+							AppSettings.selectedProfile = userProfile
+						case .failure(let error):
+							print(error)
+					}
+				}
 			}
-			
+		}
+		.store(in: &subscriptions)
+		
+		viewModel.$currentUserProfile.sink { [weak self] selectedProfile in
+			guard let selectedProfile = selectedProfile else {return}
 			let imageURL = URL(string: selectedProfile.userProfileIcon)
 			self?.profileBtn.sd_setImage(with: imageURL, for: .normal, placeholderImage: UIImage(systemName: "face.dashed.fill"), options: [.progressiveLoad])
 
 		}
 		.store(in: &subscriptions)
+
 
 	}
     

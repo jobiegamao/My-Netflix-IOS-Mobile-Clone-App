@@ -13,17 +13,18 @@ class ProfileViewViewModel: ObservableObject {
 	
 	@Published var user: UserAccount?
 	@Published var profiles: [UserProfile] = []
+	@Published var currentUserProfile: UserProfile?
 	@Published var error: Error?
 	
 	var subscriptions: Set<AnyCancellable> = []
 	
 	
-	func retreiveUser() {
+	func retrieveUser() {
 		guard let id = Auth.auth().currentUser?.uid else {return}
-		DatabaseManager.shared.collectionUsers(retreive: id)
+		DatabaseManager.shared.collectionUsers(retrieve: id)
 			.handleEvents(receiveOutput: { [weak self] userResult in
 				self?.user = userResult
-				self?.retreiveUserProfiles()
+				self?.retrieveUserProfiles()
 			})
 			.sink { [weak self] completion in
 				if case .failure(let error) = completion {
@@ -36,7 +37,7 @@ class ProfileViewViewModel: ObservableObject {
 
 	}
 	
-	func retreiveUserProfiles() {
+	func retrieveUserProfiles() {
 		guard let userID = user?.id else { return }
 		
 		DatabaseManager.shared.collectionUsersProfiles(getProfilesOf: userID)
@@ -46,6 +47,19 @@ class ProfileViewViewModel: ObservableObject {
 				}
 			} receiveValue: { [weak self] profileArrayResult in
 				self?.profiles = profileArrayResult
+			}
+			.store(in: &subscriptions)
+
+	}
+	
+	func retrieveCurrentUserProfile(profileID id: String){
+		DatabaseManager.shared.collectionUsersProfiles(getProfile: id)
+			.sink { [weak self] result in
+				if case .failure(let error) = result {
+					self?.error = error
+				}
+			} receiveValue: { [weak self] userProfileResult in
+				self?.currentUserProfile = userProfileResult
 			}
 			.store(in: &subscriptions)
 

@@ -9,7 +9,9 @@ import Foundation
 import UIKit
 
 struct AppSettings {
+	static var selectedProfileIDForKey = "selectedProfileID"
 	static var selectedProfile: UserProfile?
+	
 }
 
 class GlobalMethods {

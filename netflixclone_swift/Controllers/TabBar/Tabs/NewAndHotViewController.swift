@@ -6,33 +6,24 @@
 //
 
 import UIKit
+import Combine
 
 class NewAndHotViewController: UIViewController{
 	
 	private var films = Dictionary<Int, [Film]>()
 	private var currentIndexPath: IndexPath = IndexPath(row: 0, section: 0)
 	
-	private func configureNavbar(){
-		//navbar tabbar config
-		let navbar = navigationController!.navigationBar
-		
-		navbar.tintColor = .label
-		
-		//left
-		let titleLabel = UILabel()
-		titleLabel.text = "New & Hot"
-		titleLabel.font = .systemFont(ofSize: 25, weight: .heavy)
-		titleLabel.textColor = .label
-		
-		navigationItem.leftBarButtonItem = UIBarButtonItem(customView: titleLabel)
-		
-		//right
-		navigationItem.rightBarButtonItems = [
-			UIBarButtonItem(image: UIImage(systemName: "person"), style: .plain, target: self, action: nil),
-			UIBarButtonItem(image: UIImage(systemName: "bell.fill"), style: .plain, target: self, action: nil),
-		]
-		
+	private lazy var selectedProfile: UserProfile? = AppSettings.selectedProfile {
+		didSet{
+			if let urlString = AppSettings.selectedProfile?.userProfileIcon, let imageURL = URL(string: urlString){
+				profileBtn.sd_setImage(with: imageURL, for: .normal, placeholderImage: UIImage(systemName: "face.dashed.fill"), options: [.progressiveLoad])
+			}
+			
+		}
 	}
+	
+	private let RemindMeViewModel = RemindMeViewViewModel()
+	private var subscriptions: Set<AnyCancellable> = []
 	
 	private let sectionBarView = NewHotHeaderView()
 	
@@ -52,16 +43,6 @@ class NewAndHotViewController: UIViewController{
 	]
 	
 	
-	private func configureSectionBar(){
-		// Set up and configure the section header view
-		view.addSubview(sectionBarView)
-		sectionBarView.sectionItems = sectionHeader
-		sectionBarView.translatesAutoresizingMaskIntoConstraints = false
-		sectionBarView.didSelectSection = { [weak self] section in
-			self?.VCTable.scrollToRow(at: IndexPath(row: 0, section: section), at: .top, animated: true)
-		}
-	}
-	
 	private lazy var VCTable: UITableView = {
 		let table = UITableView(frame: .zero, style: .grouped)
 		
@@ -74,7 +55,101 @@ class NewAndHotViewController: UIViewController{
 		return table
 	}()
 	
+	private lazy var profileBtn = {
+		let btn = ProfileButton()
+//		if let urlString = AppSettings.selectedProfile?.userProfileIcon, let imageURL = URL(string: urlString){
+//			btn.sd_setImage(with: imageURL, for: .normal, placeholderImage: UIImage(systemName: "face.dashed.fill"), options: [.progressiveLoad])
+//		}
+		btn.delegate = self
+		
+		return btn
+	}()
 	
+	// MARK: - Main
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		view.backgroundColor = .systemBackground
+		
+		fetchUpcomingFromAPI()
+		fetchPopularFromAPI()
+		fetchTrendingFromAPI(media_type: MediaType.tv, tableSection: 2)
+		fetchTrendingFromAPI(media_type: MediaType.movie, tableSection: 3)
+		
+		configureNavbar()
+		configureSectionBar()
+		view.addSubview(VCTable)
+		
+		bindViews()
+		
+	}
+	
+	override func viewDidLayoutSubviews() {
+		super.viewDidLayoutSubviews()
+
+		NSLayoutConstraint.activate([
+			sectionBarView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+			sectionBarView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+			sectionBarView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+			sectionBarView.heightAnchor.constraint(equalToConstant: 50)
+		])
+		
+		NSLayoutConstraint.activate([
+			VCTable.topAnchor.constraint(equalTo: sectionBarView.bottomAnchor),
+			VCTable.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+			VCTable.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+			VCTable.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+		])
+		
+	}
+	
+	override func viewWillAppear(_ animated: Bool) {
+		super.viewWillAppear(animated)
+		
+		print("viewWillAppear")
+		selectedProfile = AppSettings.selectedProfile
+		RemindMeViewModel.retrieveRemindMeFilms()
+	}
+	
+	
+	// MARK: - Private Methods
+	
+	private func bindViews(){
+		RemindMeViewModel.$remindMeFilms.sink { [weak self] _ in
+			print("table reloaded")
+			DispatchQueue.main.async {
+				self?.VCTable.reloadSections(IndexSet(integer: 0), with: .automatic)
+			}
+		}
+		.store(in: &subscriptions)
+		
+	}
+	
+	private func configureNavbar(){
+		//navbar tabbar config
+		let navbar = navigationController!.navigationBar
+		
+		navbar.tintColor = .label
+		
+		//left
+		let titleLabel = UILabel()
+		titleLabel.text = "New & Hot"
+		titleLabel.font = .systemFont(ofSize: 25, weight: .heavy)
+		titleLabel.textColor = .label
+		
+		navigationItem.leftBarButtonItem = UIBarButtonItem(customView: titleLabel)
+		
+		//right
+		navigationItem.rightBarButtonItems = [
+			UIBarButtonItem(customView: profileBtn),
+			UIBarButtonItem(image: UIImage(systemName: "bell.fill"), style: .plain, target: self, action: #selector(didTapBell)),
+		]
+		
+	}
+	
+	@objc private func didTapBell(){
+		let vc = RemindMeViewController()
+		self.navigationController?.pushViewController(vc, animated: true)
+	}
 	
 	private func fetchUpcomingFromAPI(media_type: MediaType = .movie, total_results: Int = 5){
 		APICaller.shared.getUpcoming(media_type: media_type.rawValue) { [weak self] result in
@@ -114,44 +189,15 @@ class NewAndHotViewController: UIViewController{
 		}
 	}
 	
-	
-	
-	
-	// MARK: Main()
-    override func viewDidLoad() {
-        super.viewDidLoad()
-		view.backgroundColor = .systemBackground
-		
-		fetchUpcomingFromAPI()
-		fetchPopularFromAPI()
-		fetchTrendingFromAPI(media_type: MediaType.tv, tableSection: 2)
-		fetchTrendingFromAPI(media_type: MediaType.movie, tableSection: 3)
-		
-		configureNavbar()
-		configureSectionBar()
-		view.addSubview(VCTable)
-    }
-	
-	override func viewDidLayoutSubviews() {
-		super.viewDidLayoutSubviews()
-
-		NSLayoutConstraint.activate([
-			sectionBarView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-			sectionBarView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-			sectionBarView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-			sectionBarView.heightAnchor.constraint(equalToConstant: 50)
-		])
-		
-		NSLayoutConstraint.activate([
-			VCTable.topAnchor.constraint(equalTo: sectionBarView.bottomAnchor),
-			VCTable.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-			VCTable.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-			VCTable.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
-		])
-		
+	private func configureSectionBar(){
+		// Set up and configure the section header view
+		view.addSubview(sectionBarView)
+		sectionBarView.sectionItems = sectionHeader
+		sectionBarView.translatesAutoresizingMaskIntoConstraints = false
+		sectionBarView.didSelectSection = { [weak self] section in
+			self?.VCTable.scrollToRow(at: IndexPath(row: 0, section: section), at: .top, animated: true)
+		}
 	}
-	
-
     
 
 }
@@ -170,24 +216,29 @@ extension NewAndHotViewController: UITableViewDelegate, UITableViewDataSource {
 			case 0:
 				guard let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as? ComingSoonTableViewCell else { fatalError("dequeue error") }
 				
-				guard let filmItem = films[indexPath.section]?[indexPath.row] else {
+				guard let filmModel = films[indexPath.section]?[indexPath.row] else {
 					tableView.reloadData()
 					return cell
 				}
-				cell.configureDetails(with: filmItem)
+				
+				let remindMeSelected = RemindMeViewModel.remindMeFilms.contains(where: {$0.id == filmModel.id})
+			
+				cell.configureDetails(model: filmModel)
+				cell.configureTabView(model: filmModel, remindMeSelected)
 				cell.selectionStyle = .none
+				
 				return cell
 			case 1:
 				let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! PopularTableViewCell
-				guard let filmItem = films[indexPath.section]?[indexPath.row] else { return UITableViewCell() }
-				cell.configureDetails(with: filmItem)
+				guard let filmModel = films[indexPath.section]?[indexPath.row] else { return UITableViewCell() }
+				cell.configureDetails(with: filmModel)
 				cell.selectionStyle = .none
 				return cell
 
 			default:
 				let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! Top10TableViewCell
-				guard let filmItem = films[indexPath.section]?[indexPath.row] else { return UITableViewCell() }
-				cell.configureDetails(with: filmItem, top: indexPath.row + 1)
+				guard let filmModel = films[indexPath.section]?[indexPath.row] else { return UITableViewCell() }
+				cell.configureDetails(with: filmModel, top: indexPath.row + 1)
 				cell.selectionStyle = .none
 				return cell
 
@@ -231,3 +282,9 @@ extension NewAndHotViewController: UITableViewDelegate, UITableViewDataSource {
 
 
 
+extension NewAndHotViewController: ProfileButtonDelegate {
+	func didTapProfileButton() {
+		let profileVC = ProfileViewController()
+		navigationController?.pushViewController(profileVC, animated: true)
+	}
+}

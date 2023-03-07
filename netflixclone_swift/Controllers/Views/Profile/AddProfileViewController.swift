@@ -81,7 +81,7 @@ class AddProfileViewController: UIViewController {
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 		
-		viewModel.retreiveUser()
+		viewModel.retrieveUser()
 	}
 
    // MARK: - Private Methods

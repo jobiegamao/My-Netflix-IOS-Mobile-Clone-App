@@ -43,20 +43,28 @@ class ComingSoonTableViewCell: UITableViewCell {
 		return lv
 	}()
 	
-	private func configureTabView(model: Film){
-		let btn1 = RemindMeButton()
-		btn1.filmModel = model
-		let btn2 = InfoButton()
-		btn2.filmModel = model
+	private let btn1 = RemindMeButton()
+	private let btn2 = InfoButton()
+	
+	// MARK: - Main
+	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+		super.init(style: style, reuseIdentifier: reuseIdentifier)
+		contentView.addSubview(leftView)
+		contentView.addSubview(webView)
+		contentView.addSubview(placeholderImageView)
+		contentView.addSubview(tabView)
+		contentView.addSubview(titleLabel)
+		contentView.addSubview(descriptionLabel)
+		contentView.addSubview(genreLabel)
 		
-		tabView.buttons = [
-			btn1, btn2
-		]
+		applyConstraints()
+		
 	}
 	
-	public func configureDetails(with model: Film){
+	// MARK: - Public Configure Method
+	
+	public func configureDetails(model: Film){
 		
-		configureTabView(model: model)
 		let selectedTitle = model.name ?? model.title ?? model.original_title ?? model.original_name ?? "No Title"
 		
 		reusable.setWebViewRequest(selectedTitle: selectedTitle, model: model)
@@ -79,6 +87,20 @@ class ComingSoonTableViewCell: UITableViewCell {
 			print("Invalid date format")
 		}
 	}
+	
+	func configureTabView(model: Film, _ remindMeSelected: Bool){
+
+		btn1.filmModel = model
+		btn1.isSelected = remindMeSelected
+		
+		btn2.filmModel = model
+		
+		tabView.buttons = [
+			btn1, btn2
+		]
+	}
+	
+	// MARK: - Private Methods
 	
 	private func applyConstraints(){
 		NSLayoutConstraint.activate([
@@ -116,21 +138,6 @@ class ComingSoonTableViewCell: UITableViewCell {
 			genreLabel.rightAnchor.constraint(equalTo: webView.rightAnchor),
 			
 		])
-	}
-
-	
-	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-		super.init(style: style, reuseIdentifier: reuseIdentifier)
-		contentView.addSubview(leftView)
-		contentView.addSubview(webView)
-		contentView.addSubview(placeholderImageView)
-		contentView.addSubview(tabView)
-		contentView.addSubview(titleLabel)
-		contentView.addSubview(descriptionLabel)
-		contentView.addSubview(genreLabel)
-		
-		applyConstraints()
-		
 	}
 	
 	required init?(coder: NSCoder) {

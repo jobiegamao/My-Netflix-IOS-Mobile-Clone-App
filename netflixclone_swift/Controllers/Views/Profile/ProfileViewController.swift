@@ -77,16 +77,15 @@ class ProfileViewController: UIViewController {
 		bindViews()
 		
 		NotificationCenter.default.addObserver(forName: NSNotification.Name("newProfileAdded"), object: nil, queue: nil) { _ in
-			self.viewModel.retreiveUser()
+			self.viewModel.retrieveUser()
 		}
     }
 	
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 		
-		viewModel.retreiveUser()
+		viewModel.retrieveUser()
 		selectedProfile = AppSettings.selectedProfile
-		print("viewWillAppear")
 	}
 	
 	// MARK: - Private Methods
@@ -131,6 +130,7 @@ class ProfileViewController: UIViewController {
 	
 	@objc private func didTapProfileButton(_ sender: UserProfileButton){
 		guard let userProfile = sender.userProfile  else { return  }
+		UserDefaults.standard.set(userProfile.id, forKey: AppSettings.selectedProfileIDForKey)
 		AppSettings.selectedProfile = userProfile
 		selectedProfile = userProfile
 	}
@@ -158,6 +158,10 @@ class ProfileViewController: UIViewController {
 	
 	@objc private func didTapSignOut(){
 		try? Auth.auth().signOut()
+		
+		AppSettings.selectedProfile = nil
+		UserDefaults.standard.set(nil, forKey: AppSettings.selectedProfileIDForKey)
+		
 		if Auth.auth().currentUser == nil {
 			let vc = OnboardingViewController()
 			let rootNavController = UINavigationController(rootViewController: vc)

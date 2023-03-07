@@ -20,21 +20,23 @@ class PopularTableViewCell: UITableViewCell {
 	private lazy var genreLabel = reusable.genreLabel
 	private lazy var descriptionLabel = reusable.descriptionLabel
 	
-
+	private let btn1 = ShareButton()
+	private let btn2 = MyListButton()
+	private let btn3 = PlaySmallButton()
 	
-	private func configureTabView(model: Film){
+	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+		super.init(style: style, reuseIdentifier: reuseIdentifier)
+		contentView.addSubview(webView)
+		contentView.addSubview(placeholderImageView)
+		contentView.addSubview(tabView)
+		contentView.addSubview(titleLabel)
+		contentView.addSubview(descriptionLabel)
+		contentView.addSubview(genreLabel)
 		
-		let btn1 = ShareButton()
-		btn1.filmModel = model
-		let btn2 = MyListButton()
-		btn2.filmModel = model
-		let btn3 = PlaySmallButton()
-		btn3.filmModel = model
+		applyConstraints()
 		
-		tabView.buttons = [
-			btn1, btn2, btn3
-		]
 	}
+	
 	
 	public func configureDetails(with model: Film){
 		
@@ -53,6 +55,19 @@ class PopularTableViewCell: UITableViewCell {
 			}
 		}}
 		
+	}
+	
+	private func configureTabView(model: Film){
+		
+		btn1.filmModel = model
+		
+		btn2.filmModel = model
+		
+		btn3.filmModel = model
+		
+		tabView.buttons = [
+			btn1, btn2, btn3
+		]
 	}
 	
 	private func applyConstraints(){
@@ -88,18 +103,6 @@ class PopularTableViewCell: UITableViewCell {
 	}
 
 	
-	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-		super.init(style: style, reuseIdentifier: reuseIdentifier)
-		contentView.addSubview(webView)
-		contentView.addSubview(placeholderImageView)
-		contentView.addSubview(tabView)
-		contentView.addSubview(titleLabel)
-		contentView.addSubview(descriptionLabel)
-		contentView.addSubview(genreLabel)
-		
-		applyConstraints()
-		
-	}
 	
 	required init?(coder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")

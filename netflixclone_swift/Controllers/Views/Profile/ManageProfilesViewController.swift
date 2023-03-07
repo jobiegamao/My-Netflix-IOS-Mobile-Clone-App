@@ -94,7 +94,7 @@ class ManageProfilesViewController: UIViewController {
 		bindViews()
 		
 		NotificationCenter.default.addObserver(forName: NSNotification.Name("newProfileAdded"), object: nil, queue: nil) { _ in
-			self.viewModel.retreiveUser()
+			self.viewModel.retrieveUser()
 		}
 	
     }
@@ -103,7 +103,7 @@ class ManageProfilesViewController: UIViewController {
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 
-		viewModel.retreiveUser()
+		viewModel.retrieveUser()
 		print("viewWillAppear")
 	}
 	

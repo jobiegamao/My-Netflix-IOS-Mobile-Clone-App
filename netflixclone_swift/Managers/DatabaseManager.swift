@@ -12,7 +12,7 @@ import FirebaseFirestoreCombineSwift
 import Combine
 
 enum FirebaseError: Error {
-	case invalidData
+	case invalidData, NoUserError
 }
 
 class DatabaseManager {
@@ -22,6 +22,9 @@ class DatabaseManager {
 	let db = Firestore.firestore()
 	let usersPath = "users" //collection of users == users table
 	let profilesPath = "usersProfiles"
+	let mylistPath = "myList"
+	let remindmePath = "remindMe"
+	
 	
 	func collectionUsers(add newUser: User) -> AnyPublisher<Bool, Error> {
 		let userAccount = UserAccount(from: newUser)
@@ -31,7 +34,7 @@ class DatabaseManager {
 			.eraseToAnyPublisher()
 	}
 	
-	func collectionUsers(retreive id: String) -> AnyPublisher<UserAccount, Error>{
+	func collectionUsers(retrieve id: String) -> AnyPublisher<UserAccount, Error>{
 		db.collection(usersPath).document(id).getDocument()
 			.tryMap{ try $0.data(as: UserAccount.self) }
 			.eraseToAnyPublisher()
@@ -56,7 +59,7 @@ class DatabaseManager {
 	}
 	
 
-	func collectionUserProfiles(add profile: UserProfile) -> AnyPublisher<UserProfile, Error> {
+	func collectionUsersProfiles(add profile: UserProfile) -> AnyPublisher<UserProfile, Error> {
 		db.collection(profilesPath).document(profile.id).setData(from: profile)
 			.flatMap { _ -> AnyPublisher<UserProfile, Error> in
 				return self.db.collection(self.profilesPath).document(profile.id).getDocument()
@@ -68,6 +71,107 @@ class DatabaseManager {
 						}
 						return userProfile
 					}
+					.eraseToAnyPublisher()
+			}
+			.eraseToAnyPublisher()
+	}
+	
+	func collectionUsersProfiles(getProfile id: String) -> AnyPublisher<UserProfile, Error> {
+		return db.collection(profilesPath).document(id).getDocument()
+			.tryMap{ try $0.data(as: UserProfile.self) }
+			.eraseToAnyPublisher()
+	}
+	
+	func collectionMyList() -> AnyPublisher<[MyList], Error> {
+		guard let userProfile = AppSettings.selectedProfile else {return Fail(error: FirebaseError.NoUserError).eraseToAnyPublisher()}
+		
+		return db.collection(mylistPath)
+			.whereField("profile.id", isEqualTo: userProfile.id)
+			.getDocuments()
+			.tryMap(\.documents) //array of doc snapshots
+			.tryMap{ snapshots in
+				try snapshots.map({
+					try $0.data(as: MyList.self)
+				})
+			}
+			.eraseToAnyPublisher()
+	}
+	
+	func collectionMyList(add model: Film) -> AnyPublisher<Bool, Error>{
+		guard let userProfile = AppSettings.selectedProfile else {return Fail(error: FirebaseError.NoUserError).eraseToAnyPublisher()}
+				
+		let documentId = "\(userProfile.id)_\(model.id)"
+		let data = MyList(id: documentId, film: model, profile: userProfile)
+		
+		return db.collection(mylistPath).document(documentId).setData(from: data)
+			.map{ _ in true }
+			.eraseToAnyPublisher()
+	}
+	
+	
+	func collectionMyList(delete model: Film) -> AnyPublisher<Bool, Error>{
+		guard let userProfile = AppSettings.selectedProfile else {return Fail(error: FirebaseError.NoUserError).eraseToAnyPublisher()}
+		
+		let query = db.collection(mylistPath)
+			.whereField("profile.id", isEqualTo: userProfile.id)
+			.whereField("film.id", isEqualTo: model.id)
+			.limit(to: 1)
+
+		return query.getDocuments()
+			.flatMap { (querySnapshot) -> AnyPublisher<Bool, Error> in
+				guard let document = querySnapshot.documents.first else {
+					return Fail(error: FirebaseError.invalidData).eraseToAnyPublisher()
+				}
+				return document.reference.delete()
+					.map{ _ in true }
+					.eraseToAnyPublisher()
+			}
+			.eraseToAnyPublisher()
+	}
+	
+	
+	func collectionRemindMe() -> AnyPublisher<[MyList], Error> {
+		guard let userProfile = AppSettings.selectedProfile else {return Fail(error: FirebaseError.NoUserError).eraseToAnyPublisher()}
+		
+		return db.collection(remindmePath)
+			.whereField("profile.id", isEqualTo: userProfile.id)
+			.getDocuments()
+			.tryMap(\.documents) //array of doc snapshots
+			.tryMap{ snapshots in
+				try snapshots.map({
+					try $0.data(as: MyList.self)
+				})
+			}
+			.eraseToAnyPublisher()
+	}
+	
+	func collectionRemindMe(add model: Film) -> AnyPublisher<Bool, Error>{
+		guard let userProfile = AppSettings.selectedProfile else {return Fail(error: FirebaseError.NoUserError).eraseToAnyPublisher()}
+				
+		let documentId = "\(userProfile.id)_\(model.id)"
+		let data = RemindMe(id: documentId, film: model, profile: userProfile)
+		
+		return db.collection(remindmePath).document(documentId).setData(from: data)
+			.map{ _ in true }
+			.eraseToAnyPublisher()
+	}
+	
+	
+	func collectionRemindMe(delete model: Film) -> AnyPublisher<Bool, Error>{
+		guard let userProfile = AppSettings.selectedProfile else {return Fail(error: FirebaseError.NoUserError).eraseToAnyPublisher()}
+		
+		let query = db.collection(remindmePath)
+			.whereField("profile.id", isEqualTo: userProfile.id)
+			.whereField("film.id", isEqualTo: model.id)
+			.limit(to: 1)
+
+		return query.getDocuments()
+			.flatMap { (querySnapshot) -> AnyPublisher<Bool, Error> in
+				guard let document = querySnapshot.documents.first else {
+					return Fail(error: FirebaseError.invalidData).eraseToAnyPublisher()
+				}
+				return document.reference.delete()
+					.map{ _ in true }
 					.eraseToAnyPublisher()
 			}
 			.eraseToAnyPublisher()

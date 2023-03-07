@@ -66,7 +66,7 @@ class WhosWatchingViewController: UIViewController {
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 		
-		viewModel.retreiveUser()
+		viewModel.retrieveUser()
 	}
 	
 	
@@ -99,8 +99,13 @@ class WhosWatchingViewController: UIViewController {
 	
 	@objc private func didTapProfileButton(_ sender: UserProfileButton){
 		guard let userProfile = sender.userProfile  else { return  }
+		
+		UserDefaults.standard.set(userProfile.id, forKey: AppSettings.selectedProfileIDForKey)
 		AppSettings.selectedProfile = userProfile
+		
 		NotificationCenter.default.post(name: NSNotification.Name(rawValue: "selectedProfile"), object: nil)
+		
+		
 		if let vc = navigationController?.viewControllers.first as? OnboardingViewController{
 			vc.dismiss(animated: true){ [weak self] in
 				let homeVC = HomeViewController()
@@ -111,10 +116,6 @@ class WhosWatchingViewController: UIViewController {
 			dismiss(animated: true)
 		}
 
-//		if let navigationController = self.navigationController {
-//			navigationController.popToRootViewController(animated: true)
-//		}
-		
 				
 				
 	}

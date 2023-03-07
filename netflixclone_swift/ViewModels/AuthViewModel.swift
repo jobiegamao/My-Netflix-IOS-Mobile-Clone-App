@@ -90,14 +90,14 @@ final class AuthViewModel: ObservableObject {
 		let firstProfileName = "Me"
 		let profile = UserProfile(user: userAccount, userID: userAccount.id, userProfileName: firstProfileName, userProfileIcon: "profileicon")
 		
-		DatabaseManager.shared.collectionUserProfiles(add: profile)
+		DatabaseManager.shared.collectionUsersProfiles(add: profile)
 			.sink { [weak self] result in
 				if case .failure(let error) = result {
 					self?.error = error
 				}
 			} receiveValue: { userProfileResult in
-				print(userProfileResult)
 				AppSettings.selectedProfile = userProfileResult
+				UserDefaults.standard.set(userProfileResult.id, forKey: AppSettings.selectedProfileIDForKey)
 			}
 			.store(in: &subscriptions)
 	}

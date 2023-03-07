@@ -20,16 +20,8 @@ class MyListButton: ButtonImageAndText {
 	}
 	
 	@objc private func MyListAction() {
-//		guard let filmModel = self.filmModel else {return}
 		print("MyListAction")
-//		DataPersistenceManager.shared.downloadFilmWith(model: filmModel) { result in
-//			switch result {
-//				case .success():
-//					NotificationCenter.default.post(Notification(name: NSNotification.Name("downloaded")))
-//				case .failure(let error):
-//					print(error, "MyListButton, downloadAction() ")
-//			}
-//		}
+
 	}
 	
 	required init?(coder: NSCoder) {
