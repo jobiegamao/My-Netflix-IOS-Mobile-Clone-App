@@ -92,12 +92,17 @@ class HomeViewController: UIViewController {
 		//right
 		navigationItem.rightBarButtonItems = [
 			UIBarButtonItem(customView: profileBtn),
-			UIBarButtonItem(image: UIImage(systemName: "magnifyingglass"), style: .plain, target: self, action: nil),
+			UIBarButtonItem(image: UIImage(systemName: "magnifyingglass"), style: .plain, target: self, action: #selector(didTapSearch)),
 			UIBarButtonItem(image: UIImage(systemName: "airplayvideo"), style: .plain, target: self, action: nil)
 		]
 		
 		navigationController?.navigationBar.tintColor = .label
 		
+	}
+	
+	@objc private func didTapSearch(){
+		let vc = SearchViewController()
+		navigationController?.pushViewController(vc, animated: true)
 	}
 	
 	private func fetchListFromAPI(cell: HomeTableViewCell, category: Categories, media_type: MediaType, language: String = Language.English.rawValue, time_period: String = "day", page: Int = 1) {
@@ -269,13 +274,9 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
 extension HomeViewController: HomeTableViewCellDelegate{
 	func homeTableViewCellDidTapCell(model: Film) {
 		
-		DispatchQueue.main.async { [weak self] in
-			let vc = FilmDetailsViewController()
-			vc.configure(model: model)
-			self?.present(vc, animated: true)
-			
-		}
-		
+		let vc = FilmDetailsViewController()
+		vc.configure(model: model)
+		present(vc, animated: true)
 	}
 }
 

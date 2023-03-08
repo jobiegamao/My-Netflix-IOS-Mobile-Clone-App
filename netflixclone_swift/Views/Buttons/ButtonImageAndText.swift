@@ -84,9 +84,10 @@ class ButtonImageAndText: UIButton {
 			iconImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
 			iconImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
 			iconImageView.bottomAnchor.constraint(equalTo: bottomAnchor),
+			iconImageView.widthAnchor.constraint(equalToConstant: 30),
 			
 			label.centerYAnchor.constraint(equalTo: iconImageView.centerYAnchor),
-			label.leadingAnchor.constraint(equalTo: iconImageView.trailingAnchor, constant: 5),
+			label.leadingAnchor.constraint(equalTo: iconImageView.trailingAnchor, constant: 20),
 			label.trailingAnchor.constraint(equalTo: trailingAnchor),
 			label.bottomAnchor.constraint(equalTo: bottomAnchor),
 		])

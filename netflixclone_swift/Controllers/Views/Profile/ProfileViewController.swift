@@ -59,8 +59,19 @@ class ProfileViewController: UIViewController {
 	private lazy var actionsView: UITableView = {
 		let table = UITableView()
 		table.translatesAutoresizingMaskIntoConstraints = false
+		table.register(ActionsTableViewCell.self, forCellReuseIdentifier: ActionsTableViewCell.identifier)
+		
+		table.delegate = self
+		table.dataSource = self
 		return table
 	}()
+	
+	private let actionsViewCells = [
+		Section(title: "Notifications", icon: "bell.badge"),
+		Section(title: "My List", icon: "play.tv"),
+		Section(title: "Account", icon: "person.badge.key.fill"),
+		Section(title: "Settings", icon: "gear.circle"),
+	]
 
 	// MARK: - Main
     override func viewDidLoad() {
@@ -76,7 +87,7 @@ class ProfileViewController: UIViewController {
 		applyConstraints()
 		bindViews()
 		
-		NotificationCenter.default.addObserver(forName: NSNotification.Name("newProfileAdded"), object: nil, queue: nil) { _ in
+		NotificationCenter.default.addObserver(forName: .didAddNewProfile, object: nil, queue: nil) { _ in
 			self.viewModel.retrieveUser()
 		}
     }
@@ -133,6 +144,9 @@ class ProfileViewController: UIViewController {
 		UserDefaults.standard.set(userProfile.id, forKey: AppSettings.selectedProfileIDForKey)
 		AppSettings.selectedProfile = userProfile
 		selectedProfile = userProfile
+		
+		// to go back to the previous view controller
+		navigationController?.popViewController(animated: true)
 	}
 	
 	private func applyConstraints(){
@@ -145,7 +159,7 @@ class ProfileViewController: UIViewController {
 			manageProfileBtn.topAnchor.constraint(equalTo: myProfilesView.bottomAnchor, constant: 15),
 			manageProfileBtn.centerXAnchor.constraint(equalTo: view.centerXAnchor),
 			
-			actionsView.topAnchor.constraint(equalTo: manageProfileBtn.bottomAnchor, constant: 25),
+			actionsView.topAnchor.constraint(equalTo: manageProfileBtn.bottomAnchor, constant: 35),
 			actionsView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
 			actionsView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
 			actionsView.heightAnchor.constraint(equalToConstant: 300),
@@ -172,4 +186,35 @@ class ProfileViewController: UIViewController {
 	
     
 
+}
+
+extension ProfileViewController: UITableViewDelegate, UITableViewDataSource{
+	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+		return actionsViewCells.count
+	}
+	
+	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		guard let cell = tableView.dequeueReusableCell(withIdentifier: ActionsTableViewCell.identifier, for: indexPath) as? ActionsTableViewCell else {return UITableViewCell()}
+		
+		cell.configureCell(with: actionsViewCells[indexPath.row])
+		return cell
+	}
+	
+	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+		tableView.deselectRow(at: indexPath, animated: true)
+		
+		switch indexPath.row {
+			case 0: // Notif
+				let vc = RemindMeViewController()
+				navigationController?.pushViewController(vc, animated: true)
+			case 1: // My List
+				let vc = MyListViewController()
+				navigationController?.pushViewController(vc, animated: true)
+			default:
+				break
+		}
+	}
+	
+	
+	
 }

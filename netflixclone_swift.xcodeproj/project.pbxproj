@@ -85,6 +85,8 @@
 		6CCCB22329ABBEE100557CC6 /* RemindMeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CCCB22229ABBEE100557CC6 /* RemindMeButton.swift */; };
 		6CCCB22629ABC0D100557CC6 /* API_KEYS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CCCB22529ABC0D100557CC6 /* API_KEYS.swift */; };
 		6CCDC0C029B79F6100677F2F /* NewHotViewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CCDC0BF29B79F6100677F2F /* NewHotViewViewModel.swift */; };
+		6CCDC0C329B8653000677F2F /* ActionsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CCDC0C229B8653000677F2F /* ActionsTableViewCell.swift */; };
+		6CCDC0C629B8F3B800677F2F /* MyListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CCDC0C529B8F3B800677F2F /* MyListViewController.swift */; };
 		6CDD19DF2973DCAD00EA0982 /* APICaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CDD19DE2973DCAD00EA0982 /* APICaller.swift */; };
 		6CDD19E12975119F00EA0982 /* Film.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CDD19E02975119F00EA0982 /* Film.swift */; };
 		6CDD19E329752A6D00EA0982 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CDD19E229752A6D00EA0982 /* Extensions.swift */; };
@@ -165,6 +167,8 @@
 		6CCCB22229ABBEE100557CC6 /* RemindMeButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemindMeButton.swift; sourceTree = "<group>"; };
 		6CCCB22529ABC0D100557CC6 /* API_KEYS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API_KEYS.swift; sourceTree = "<group>"; };
 		6CCDC0BF29B79F6100677F2F /* NewHotViewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewHotViewViewModel.swift; sourceTree = "<group>"; };
+		6CCDC0C229B8653000677F2F /* ActionsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionsTableViewCell.swift; sourceTree = "<group>"; };
+		6CCDC0C529B8F3B800677F2F /* MyListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyListViewController.swift; sourceTree = "<group>"; };
 		6CDD19DE2973DCAD00EA0982 /* APICaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APICaller.swift; sourceTree = "<group>"; };
 		6CDD19E02975119F00EA0982 /* Film.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Film.swift; sourceTree = "<group>"; };
 		6CDD19E229752A6D00EA0982 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
@@ -491,6 +495,7 @@
 		6C80804D298100910010DC74 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				6CCDC0C429B8F39200677F2F /* MyList */,
 				6C2F9F1F29B637A900A057E9 /* ReminderBell */,
 				6CCCB20A29AB23FC00557CC6 /* Onboarding */,
 				6C0D670629ADEF7D00A5C0B2 /* FilmPreview */,
@@ -525,6 +530,7 @@
 			isa = PBXGroup;
 			children = (
 				6CC41BAB29ACF101000F7533 /* ProfilesCollectionViewCell.swift */,
+				6CCDC0C229B8653000677F2F /* ActionsTableViewCell.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -568,6 +574,14 @@
 				6CCDC0BF29B79F6100677F2F /* NewHotViewViewModel.swift */,
 			);
 			path = NewHotViewModels;
+			sourceTree = "<group>";
+		};
+		6CCDC0C429B8F39200677F2F /* MyList */ = {
+			isa = PBXGroup;
+			children = (
+				6CCDC0C529B8F3B800677F2F /* MyListViewController.swift */,
+			);
+			path = MyList;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -708,9 +722,11 @@
 				6C00E7562987B73900090704 /* NetflixModel.xcdatamodeld in Sources */,
 				6C0D670329ADDF3900A5C0B2 /* UserProfileButton.swift in Sources */,
 				6C2F9F2129B637E700A057E9 /* RemindMeViewController.swift in Sources */,
+				6CCDC0C329B8653000677F2F /* ActionsTableViewCell.swift in Sources */,
 				6CDD19E329752A6D00EA0982 /* Extensions.swift in Sources */,
 				6CCCB21B29AB4F0F00557CC6 /* DatabaseManager.swift in Sources */,
 				6CCCB21329AB4B3000557CC6 /* LoginViewController.swift in Sources */,
+				6CCDC0C629B8F3B800677F2F /* MyListViewController.swift in Sources */,
 				6C00E77D2987CA0400090704 /* Genre.swift in Sources */,
 				6C54D5CA29A5EC1B000CD40B /* ShareButton.swift in Sources */,
 				6CCCB21529AB4C3600557CC6 /* CustomTextfield.swift in Sources */,

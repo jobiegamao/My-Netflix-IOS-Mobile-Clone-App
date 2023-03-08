@@ -57,9 +57,6 @@ class NewAndHotViewController: UIViewController{
 	
 	private lazy var profileBtn = {
 		let btn = ProfileButton()
-//		if let urlString = AppSettings.selectedProfile?.userProfileIcon, let imageURL = URL(string: urlString){
-//			btn.sd_setImage(with: imageURL, for: .normal, placeholderImage: UIImage(systemName: "face.dashed.fill"), options: [.progressiveLoad])
-//		}
 		btn.delegate = self
 		
 		return btn
@@ -151,11 +148,22 @@ class NewAndHotViewController: UIViewController{
 		self.navigationController?.pushViewController(vc, animated: true)
 	}
 	
+	private func configureSectionBar(){
+		// Set up and configure the section header view
+		view.addSubview(sectionBarView)
+		sectionBarView.sectionItems = sectionHeader
+		sectionBarView.translatesAutoresizingMaskIntoConstraints = false
+		sectionBarView.didSelectSection = { [weak self] section in
+			self?.VCTable.scrollToRow(at: IndexPath(row: 0, section: section), at: .top, animated: true)
+		}
+	}
+	
 	private func fetchUpcomingFromAPI(media_type: MediaType = .movie, total_results: Int = 5){
 		APICaller.shared.getUpcoming(media_type: media_type.rawValue) { [weak self] result in
 			switch result{
 				case .success(let list):
-					self?.films[0] = Array(list.prefix(total_results))
+					self?.films[0] = list
+					print("num of upcoming films",list.count)
 					DispatchQueue.main.async {
 						self?.VCTable.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
 					}
@@ -189,22 +197,22 @@ class NewAndHotViewController: UIViewController{
 		}
 	}
 	
-	private func configureSectionBar(){
-		// Set up and configure the section header view
-		view.addSubview(sectionBarView)
-		sectionBarView.sectionItems = sectionHeader
-		sectionBarView.translatesAutoresizingMaskIntoConstraints = false
-		sectionBarView.didSelectSection = { [weak self] section in
-			self?.VCTable.scrollToRow(at: IndexPath(row: 0, section: section), at: .top, animated: true)
-		}
-	}
-    
-
+	
+	
+	
+	
+	
 }
 
 extension NewAndHotViewController: UITableViewDelegate, UITableViewDataSource {
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return 5
+		switch section{
+			case 0: //upcoming
+				return films[0]?.count ?? 2
+			default:
+				return 5
+				
+		}
 	}
 	
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -214,7 +222,7 @@ extension NewAndHotViewController: UITableViewDelegate, UITableViewDataSource {
 
 		switch indexPath.section {
 			case 0:
-				guard let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as? ComingSoonTableViewCell else { fatalError("dequeue error") }
+				guard let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as? ComingSoonTableViewCell else { return UITableViewCell() }
 				
 				guard let filmModel = films[indexPath.section]?[indexPath.row] else {
 					tableView.reloadData()

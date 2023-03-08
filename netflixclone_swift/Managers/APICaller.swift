@@ -57,8 +57,7 @@ class APICaller {
 	
 	
 	func getUpcoming(media_type: String, completion: @escaping (Result<[Film], Error>) -> Void){
-		
-		//	https: //api.themoviedb.org/3/movie/upcoming?api_key=066463e142c0da07452286afef0de489&original_language=en
+
 		guard let url = URL(string: "\(Constants.baseURL)/3/\(media_type)/upcoming?api_key=\(Constants.API_KEY)" ) else {return}
 		
 		 let task = URLSession.shared.dataTask(with: URLRequest(url: url)){ data, _, error in
@@ -79,8 +78,6 @@ class APICaller {
 	
 	
 	func getPopular(media_type: String, completion: @escaping (Result<[Film], Error>) -> Void){
-//	https: //api.themoviedb.org/3/movie/popular?api_key=<<api_key>>&language=en-US&page=1
-//	https: //api.themoviedb.org/3/tv/popular?api_key=<<api_key>>&language=en-US&page=1
 		
 		// api url
 		guard let url = URL(string: "\(Constants.baseURL)/3/\(media_type)/popular?api_key=\(Constants.API_KEY)") else {return}
@@ -242,4 +239,10 @@ class APICaller {
 		}
 		task.resume()
 	}
+ 
+ 
+ //	https: //api.themoviedb.org/3/movie/upcoming?api_key=066463e142c0da07452286afef0de489&original_language=en
+ 
+ //	https: //api.themoviedb.org/3/movie/popular?api_key=<<api_key>>&language=en-US&page=1
+ //	https: //api.themoviedb.org/3/tv/popular?api_key=<<api_key>>&language=en-US&page=1
  */

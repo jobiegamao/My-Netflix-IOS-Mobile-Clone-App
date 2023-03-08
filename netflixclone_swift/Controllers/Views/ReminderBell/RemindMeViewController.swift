@@ -107,11 +107,10 @@ extension RemindMeViewController: UITableViewDelegate, UITableViewDataSource {
 		
 		let model = viewModel.remindMeFilms[indexPath.row]
 
-		DispatchQueue.main.async { [weak self] in
-			let vc = FilmDetailsViewController()
-			vc.configure(model: model)
-			self?.present(vc, animated: true)
-		}
+		let vc = FilmDetailsViewController()
+		vc.configure(model: model)
+		present(vc, animated: true)
+		
 		
 	}
 	

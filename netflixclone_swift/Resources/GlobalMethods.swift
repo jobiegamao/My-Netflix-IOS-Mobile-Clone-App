@@ -53,23 +53,18 @@ class GlobalMethods {
 		}
 	}
 	
-	func filterWithTitle(withArray arraylist: [Film]) -> [Film]{
-		return arraylist.filter { film in
-			film.title != nil || film.name != nil || film.original_name != nil || film.original_title != nil
-		}
-	}
 	
 	func filterUpcoming(withArray arraylist: [Film]) -> [Film] {
 		let dateFormatter = DateFormatter()
 		dateFormatter.dateFormat = "yyyy-MM-dd"
-		//let today = dateFormatter.string(from: Date())
-		guard let maxDate = dateFormatter.date(from: "2022-12-31") else { return arraylist}
+		let today = Date()
+//		guard let maxDate = dateFormatter.date(from: "2022-12-31") else { return arraylist}
 		
 		
 		return arraylist.filter { film in
 			if let releaseDateStr = film.release_date,
 			   let releaseDate = dateFormatter.date(from: releaseDateStr) {
-				return releaseDate > maxDate
+				return releaseDate > today
 			}
 			return false
 		}

@@ -15,7 +15,6 @@ class ProfilesCollectionViewCell: UICollectionViewCell {
 	private lazy var profileBtn = {
 		let btn = ButtonImageAndText(text: "hello", image: UIImage(systemName: "person"), iconPlacement: .top)
 		btn.translatesAutoresizingMaskIntoConstraints = false
-		btn.backgroundColor = .blue
 		return btn
 	}()
 	
@@ -23,7 +22,6 @@ class ProfilesCollectionViewCell: UICollectionViewCell {
 		super.init(frame: frame)
 		
 		contentView.addSubview(profileBtn)
-		backgroundColor = .brown
 		applyConstraints()
 	}
 	

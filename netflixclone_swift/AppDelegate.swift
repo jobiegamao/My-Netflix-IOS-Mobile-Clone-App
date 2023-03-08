@@ -18,7 +18,34 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		// Override point for customization after application launch.
 		configureTabBar()
 		FirebaseApp.configure()
+		notificationPermission()
 		return true
+	}
+	
+	func notificationPermission(){
+		let center = UNUserNotificationCenter.current()
+
+		center.getNotificationSettings { settings in
+			switch settings.authorizationStatus {
+				case .authorized:
+					// Notification permission has already been granted
+					break
+				case .denied:
+					// Notification permission has already been denied
+					break
+				case .notDetermined:
+					// Notification permission has not yet been requested
+					center.requestAuthorization(options: [.alert, .sound]) { granted, error in
+						if let error = error {
+							// Handle error
+							print(error)
+						}
+					}
+				default: break
+					
+			}
+		}
+		
 	}
 	
 	func configureTabBar() {

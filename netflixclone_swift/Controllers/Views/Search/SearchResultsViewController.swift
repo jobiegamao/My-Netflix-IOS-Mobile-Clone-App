@@ -77,11 +77,10 @@ extension SearchResultsViewController: UICollectionViewDelegate, UICollectionVie
 		
 		let selected = films[indexPath.row]
 		 
-		DispatchQueue.main.async { [weak self] in
-			let vc = FilmDetailsViewController()
-			vc.configure(model: selected)
-			self?.present(vc, animated: true)
-		}
+		let vc = FilmDetailsViewController()
+		vc.configure(model: selected)
+		present(vc, animated: true)
+		
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {

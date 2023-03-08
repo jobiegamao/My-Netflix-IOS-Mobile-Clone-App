@@ -93,7 +93,7 @@ class ManageProfilesViewController: UIViewController {
 		applyConstraints()
 		bindViews()
 		
-		NotificationCenter.default.addObserver(forName: NSNotification.Name("newProfileAdded"), object: nil, queue: nil) { _ in
+		NotificationCenter.default.addObserver(forName: .didAddNewProfile, object: nil, queue: nil) { _ in
 			self.viewModel.retrieveUser()
 		}
 	

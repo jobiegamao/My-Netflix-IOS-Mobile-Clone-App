@@ -25,20 +25,7 @@ class SearchViewController: UIViewController {
 		return table
 	}()
 	
-	func fetchDiscoverFromAPI(media_type: MediaType){
-		APICaller.shared.getDiscover(media_type: media_type.rawValue) { [weak self] result in
-			switch result {
-				case .success(let list):
-					self?.films = list
-					DispatchQueue.main.async {
-						self?.discoverTable.reloadData()
-					}
-				case .failure(let error):
-					print(error.localizedDescription)
-			}
-		}
-	}
-	
+	// MARK: - Main
     override func viewDidLoad() {
         super.viewDidLoad()
 		view.backgroundColor = .systemBackground
@@ -59,6 +46,20 @@ class SearchViewController: UIViewController {
 	override func viewDidLayoutSubviews() {
 		super.viewDidLayoutSubviews()
 		discoverTable.frame = view.bounds
+	}
+	
+	private func fetchDiscoverFromAPI(media_type: MediaType){
+		APICaller.shared.getDiscover(media_type: media_type.rawValue) { [weak self] result in
+			switch result {
+				case .success(let list):
+					self?.films = list
+					DispatchQueue.main.async {
+						self?.discoverTable.reloadData()
+					}
+				case .failure(let error):
+					print(error.localizedDescription)
+			}
+		}
 	}
 
 }
@@ -85,11 +86,11 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
 		tableView.deselectRow(at: indexPath, animated: true)
 		
 		let model = films[indexPath.row]
-		DispatchQueue.main.async { [weak self] in
-			let vc = FilmDetailsViewController()
-			vc.configure(model: model)
-			self?.present(vc, animated: true)
-		}
+	
+		let vc = FilmDetailsViewController()
+		vc.configure(model: model)
+		present(vc, animated: true)
+		
 	}
 	
 }
@@ -117,11 +118,11 @@ extension SearchViewController: UISearchResultsUpdating, SearchResultsViewContro
 	}
 	
 	func searchResultsViewControllerDidTapCell(model: Film) {
-		DispatchQueue.main.async { [weak self] in
-			let vc =  FilmDetailsViewController()
-			vc.configure(model: model)
-			self?.navigationController?.pushViewController(vc, animated: true)
-		}
 		
+		let vc =  FilmDetailsViewController()
+		vc.configure(model: model)
+		navigationController?.pushViewController(vc, animated: true)
 	}
+	
+	
 }

@@ -37,7 +37,7 @@ class DownloadsViewController: UIViewController {
 	    // Bring the table view to the back
 		VCtable.layer.zPosition = -1
 		
-		NotificationCenter.default.addObserver(forName: NSNotification.Name("downloaded"), object: nil, queue: nil) { _ in
+		NotificationCenter.default.addObserver(forName: .didTapDownload, object: nil, queue: nil) { _ in
 			self.fetchLocalStorage()
 		}
     }
@@ -122,13 +122,12 @@ extension DownloadsViewController: UITableViewDelegate, UITableViewDataSource {
 		
 		let model = downloadsFilm[indexPath.row]
 
-		DispatchQueue.main.async { [weak self] in
-			let vc = FilmDetailsViewController()
-			vc.configure(model: model)
-			self?.present(vc, animated: true)
-		}
-		
+		let vc = FilmDetailsViewController()
+		vc.configure(model: model)
+		present(vc, animated: true)
 	}
+	
+	
 	
 }
 

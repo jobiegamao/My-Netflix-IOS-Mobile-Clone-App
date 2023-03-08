@@ -29,6 +29,16 @@ class FilmTableViewCell: UITableViewCell {
 		return button
 	}()
 	
+	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+		super.init(style: style, reuseIdentifier: reuseIdentifier)
+		contentView.addSubview(filmPosterImageView)
+		contentView.addSubview(filmPosterLabel)
+		contentView.addSubview(playFilmBtn)
+		
+		applyConstraints()
+	}
+	
+	
 	private func applyConstraints(){
 		NSLayoutConstraint.activate( [
 			filmPosterImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15),
@@ -54,14 +64,7 @@ class FilmTableViewCell: UITableViewCell {
 		filmPosterLabel.text = model.title ?? model.name ?? model.original_name ?? model.original_title
 	}
 	
-	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-		super.init(style: style, reuseIdentifier: reuseIdentifier)
-		contentView.addSubview(filmPosterImageView)
-		contentView.addSubview(filmPosterLabel)
-		contentView.addSubview(playFilmBtn)
-		
-		applyConstraints()
-	}
+	
 	
 	 
 	required init?(coder: NSCoder) {

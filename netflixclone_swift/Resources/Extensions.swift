@@ -53,3 +53,9 @@ extension UIView {
 		subviews.forEach { $0.removeFromSuperview() }
 	}
 }
+
+extension Notification.Name {
+	static let didTapDownload = Notification.Name("didTapDownload")
+	static let didSelectAProfile = Notification.Name("didSelectAProfile")
+	static let didAddNewProfile = Notification.Name("didAddNewProfile")
+}

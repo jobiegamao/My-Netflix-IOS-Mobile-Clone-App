@@ -59,7 +59,7 @@ class HomeTableViewCell: UITableViewCell {
 		DataPersistenceManager.shared.saveAsFilmItem(model: films[indexPath.row]) { result in
 			switch result {
 				case .success():
-					NotificationCenter.default.post(Notification(name: NSNotification.Name("downloaded")))
+					NotificationCenter.default.post(name: .didTapDownload, object: nil)
 				case .failure(let error):
 					print(error, "HomeTableViewCell, downloadAction() ")
 			}

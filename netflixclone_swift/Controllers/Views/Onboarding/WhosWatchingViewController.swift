@@ -47,9 +47,6 @@ class WhosWatchingViewController: UIViewController {
 	}()
 	
 	
-	
-	
-
 	// MARK: - Main
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -103,20 +100,21 @@ class WhosWatchingViewController: UIViewController {
 		UserDefaults.standard.set(userProfile.id, forKey: AppSettings.selectedProfileIDForKey)
 		AppSettings.selectedProfile = userProfile
 		
-		NotificationCenter.default.post(name: NSNotification.Name(rawValue: "selectedProfile"), object: nil)
 		
-		
-		if let vc = navigationController?.viewControllers.first as? OnboardingViewController{
-			vc.dismiss(animated: true){ [weak self] in
-				let homeVC = HomeViewController()
-				self?.navigationController?.pushViewController(homeVC, animated: true)
-			
-			}
-		} else {
-			dismiss(animated: true)
+		guard let modal = navigationController?.viewControllers.first as? OnboardingViewController else {return}
+		modal.dismiss(animated: false) { [weak self] in
+			let homeVC = HomeViewController()
+			self?.navigationController?.pushViewController(homeVC, animated: true)
 		}
-
-				
+		
+		
+//		if let navController = navigationController {
+//			let homeVC = HomeViewController()
+//			navController.pushViewController(homeVC, animated: true)
+//			dismiss(animated: false, completion: nil)
+//		} else {
+//			dismiss(animated: false, completion: nil)
+//		}
 				
 	}
 
@@ -152,20 +150,7 @@ extension WhosWatchingViewController: UICollectionViewDataSource, UICollectionVi
 
 		return cell
 	}
-	
-	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-		print(profiles[indexPath.row])
-		
-		
-//		guard let vc = navigationController?.viewControllers.first as? OnboardingViewController else {return}
-//		vc.dismiss(animated: true){ [weak self] in
-//			AppSettings.selectedProfile = self?.profiles[indexPath.row]
-//			print(AppSettings.selectedProfile)
-//			let homeVC = HomeViewController()
-//			self?.navigationController?.pushViewController(homeVC, animated: true)
-		//
-//		}
-	}
+
 
 }
 

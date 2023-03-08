@@ -98,7 +98,7 @@ class AddProfileViewController: UIViewController {
 		viewModel.$isDone.sink { [weak self] boolResult in
 			if boolResult {
 				self?.dismiss(animated: true){
-					NotificationCenter.default.post(name: NSNotification.Name(rawValue: "newProfileAdded"), object: nil)
+					NotificationCenter.default.post(name: .didAddNewProfile, object: nil)
 				}
 			}
 		}

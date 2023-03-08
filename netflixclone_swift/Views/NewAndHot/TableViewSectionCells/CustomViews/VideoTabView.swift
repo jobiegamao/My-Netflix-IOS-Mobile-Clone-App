@@ -17,13 +17,21 @@ class VideoTabView: UIView {
 		}
 	}
 	
-	
-	let logoImageView: UIImageView = {
+	private let logoImageView: UIImageView = {
 		let liv = UIImageView()
 		liv.translatesAutoresizingMaskIntoConstraints = false
 		liv.contentMode = .scaleAspectFill
 		liv.clipsToBounds = true
 		return liv
+	}()
+	
+	private lazy var stack: UIStackView = {
+		let stack = UIStackView(arrangedSubviews: buttons)
+		stack.spacing = 40
+		stack.alignment = .trailing
+		stack.translatesAutoresizingMaskIntoConstraints = false
+		
+		return stack
 	}()
 	
 	
@@ -36,12 +44,6 @@ class VideoTabView: UIView {
 	private func configureVideoTabView(){
 		
 		addSubview(logoImageView)
-		//put buttons in stack
-		let stack = UIStackView(arrangedSubviews: buttons)
-		stack.spacing = 40
-		stack.alignment = .trailing
-		stack.translatesAutoresizingMaskIntoConstraints = false
-		
 		addSubview(stack)
 		
 		NSLayoutConstraint.activate([
@@ -56,6 +58,7 @@ class VideoTabView: UIView {
 			
 		])
 	}
+	
 	
 	
 	required init?(coder: NSCoder) {

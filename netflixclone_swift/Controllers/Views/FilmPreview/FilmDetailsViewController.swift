@@ -80,7 +80,7 @@ class FilmDetailsViewController: UIViewController, UIScrollViewDelegate {
 		DataPersistenceManager.shared.saveAsFilmItem(model: filmModel){ result in
 			switch result {
 				case .success():
-					NotificationCenter.default.post(Notification(name: NSNotification.Name("downloaded")))
+					NotificationCenter.default.post(name: .didTapDownload, object: nil)
 				case .failure(let error):
 					print(error, "HomeTableViewCell, downloadAction() ")
 			}
@@ -91,13 +91,11 @@ class FilmDetailsViewController: UIViewController, UIScrollViewDelegate {
 	public func configure(model: Film) {
 		self.model = model
 		
-		let selectedTitle = model.name ?? model.title ?? model.original_title ?? model.original_name ?? "No Title"
-		
 		GlobalMethods.shared.getYtVidURL(model: model) { [weak self] result in
 			switch result{
 				case .success(let url):
 					let request = URLRequest(url: url)
-					DispatchQueue.main.async {
+					DispatchQueue.global(qos: .utility).async {
 						self?.webView.load(request)
 					}
 				case .failure(_):
@@ -112,17 +110,22 @@ class FilmDetailsViewController: UIViewController, UIScrollViewDelegate {
 			}
 		}
 		
-		// Update the rest of the UI
-		titleLabel.text = selectedTitle
-		descriptionLabel.text = model.overview
-		
+		DispatchQueue.main.async { [weak self] in
+			let selectedTitle = model.name ?? model.title ?? model.original_title ?? model.original_name ?? "No Title"
+			self?.titleLabel.text = selectedTitle
+			self?.descriptionLabel.text = model.overview
+		}
+			
 		if let genres_id = model.genre_ids{
 			GlobalMethods.shared.getGenresFromAPI(genres_id: genres_id ) { [weak self] stringResult in
 				DispatchQueue.main.async {
 					self?.genreLabel.text = stringResult
 				}
+				
 			}
 		}
+		
+		
 	}
 	
 	private func configureConstraints(){

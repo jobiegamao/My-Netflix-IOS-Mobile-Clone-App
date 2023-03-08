@@ -83,7 +83,7 @@ extension UpcomingViewController: UITableViewDelegate, UITableViewDataSource {
 		
 		APICaller.shared.getFilmYoutubeVideo(query: filmTitle + " trailer") { [weak self] result in
 			switch result {
-				case .success(let searchResult):
+				case .success(_):
 					DispatchQueue.main.async {
 						let vc = FilmDetailsViewController()
 						vc.configure(model: film)

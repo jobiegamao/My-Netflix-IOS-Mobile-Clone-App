@@ -91,7 +91,7 @@ class NewHotReusableViews: UIView {
 			switch result{
 				case .success(let url):
 					let request = URLRequest(url: url)
-					DispatchQueue.main.async {
+					DispatchQueue.global(qos: .utility).async {
 						self?.webView.load(request)
 					}
 				case .failure(_):

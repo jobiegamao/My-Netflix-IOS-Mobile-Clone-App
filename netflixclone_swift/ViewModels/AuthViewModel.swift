@@ -116,7 +116,7 @@ final class AuthViewModel: ObservableObject {
  .receive{}
  .store()
  
- .handleEvents(receiveOutput:) is there to access the return value of the func above
+ .handleEvents(receiveOutput:) triggered when we want to do something after, handleEvents can occur on time indicated e.g. receiveOutput when there is output
  
 
  // when ERROR
