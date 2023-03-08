@@ -85,10 +85,7 @@ extension HomeTableViewCell: UICollectionViewDelegate, UICollectionViewDataSourc
 		
 		guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FilmCollectionViewCell.identifier, for: indexPath) as? FilmCollectionViewCell else { return UICollectionViewCell() }
 		
-		let content = films[indexPath.row]
-		let title = content.title ?? content.name ?? content.original_title ?? content.original_name ?? "No Title"
-		let model = FilmViewModel(title: title, posterURL: content.poster_path ?? "")
-		cell.configure(with: model)
+		cell.configure(with: films[indexPath.row])
 		
 		return cell
 	}

@@ -57,8 +57,7 @@ class Top10TableViewCell: UITableViewCell {
 	
 	// MARK: - Public Configure Method
 	public func configureDetails(with model: Film, top position: Int){
-		configureTabView(model: model)
-		
+	
 		let selectedTitle = model.name ?? model.title ?? model.original_title ?? model.original_name ?? "No Title"
 		
 		reusable.setWebViewRequest(selectedTitle: selectedTitle, model: model)
@@ -77,17 +76,18 @@ class Top10TableViewCell: UITableViewCell {
 
 	}
 	
-	func configureTabView(model: Film){
+	public func configureTabView(model: Film, _ myListSelected: Bool){
+		
 		btn1.filmModel = model
 		
 		btn2.filmModel = model
+		btn2.isSelected = myListSelected
 		
 		btn3.filmModel = model
 		
 		tabView.buttons = [
 			btn1, btn2, btn3
 		]
-		
 	}
 	
 	// MARK: - Private Methods

@@ -87,6 +87,7 @@
 		6CCDC0C029B79F6100677F2F /* NewHotViewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CCDC0BF29B79F6100677F2F /* NewHotViewViewModel.swift */; };
 		6CCDC0C329B8653000677F2F /* ActionsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CCDC0C229B8653000677F2F /* ActionsTableViewCell.swift */; };
 		6CCDC0C629B8F3B800677F2F /* MyListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CCDC0C529B8F3B800677F2F /* MyListViewController.swift */; };
+		6CCDC0C929B918C700677F2F /* MyListViewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CCDC0C829B918C700677F2F /* MyListViewViewModel.swift */; };
 		6CDD19DF2973DCAD00EA0982 /* APICaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CDD19DE2973DCAD00EA0982 /* APICaller.swift */; };
 		6CDD19E12975119F00EA0982 /* Film.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CDD19E02975119F00EA0982 /* Film.swift */; };
 		6CDD19E329752A6D00EA0982 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CDD19E229752A6D00EA0982 /* Extensions.swift */; };
@@ -169,6 +170,7 @@
 		6CCDC0BF29B79F6100677F2F /* NewHotViewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewHotViewViewModel.swift; sourceTree = "<group>"; };
 		6CCDC0C229B8653000677F2F /* ActionsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionsTableViewCell.swift; sourceTree = "<group>"; };
 		6CCDC0C529B8F3B800677F2F /* MyListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyListViewController.swift; sourceTree = "<group>"; };
+		6CCDC0C829B918C700677F2F /* MyListViewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyListViewViewModel.swift; sourceTree = "<group>"; };
 		6CDD19DE2973DCAD00EA0982 /* APICaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APICaller.swift; sourceTree = "<group>"; };
 		6CDD19E02975119F00EA0982 /* Film.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Film.swift; sourceTree = "<group>"; };
 		6CDD19E229752A6D00EA0982 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
@@ -328,12 +330,13 @@
 		6C42DE6F296FEFF500966528 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				6CCDC0C729B9186200677F2F /* HomeViewModels */,
 				6CCDC0C129B79F6B00677F2F /* NewHotViewModels */,
 				6C2F9F1229B5049C00A057E9 /* ProfileViewModels */,
 				6CC23E90297B996D00AB62B1 /* FilmViewModel.swift */,
 				6C00E75029864E0700090704 /* FilmDetailsViewModel.swift */,
 				6CCCB21629AB4E8B00557CC6 /* AuthViewModel.swift */,
-				6CC41BAD29ACF532000F7533 /* HomeViewViewModel.swift */,
+				6CCDC0C829B918C700677F2F /* MyListViewViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -495,9 +498,9 @@
 		6C80804D298100910010DC74 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				6CCCB20A29AB23FC00557CC6 /* Onboarding */,
 				6CCDC0C429B8F39200677F2F /* MyList */,
 				6C2F9F1F29B637A900A057E9 /* ReminderBell */,
-				6CCCB20A29AB23FC00557CC6 /* Onboarding */,
 				6C0D670629ADEF7D00A5C0B2 /* FilmPreview */,
 				6C0D670529ADEF6100A5C0B2 /* Search */,
 				6C0D670429ADEF4C00A5C0B2 /* Profile */,
@@ -582,6 +585,14 @@
 				6CCDC0C529B8F3B800677F2F /* MyListViewController.swift */,
 			);
 			path = MyList;
+			sourceTree = "<group>";
+		};
+		6CCDC0C729B9186200677F2F /* HomeViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				6CC41BAD29ACF532000F7533 /* HomeViewViewModel.swift */,
+			);
+			path = HomeViewModels;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -685,6 +696,7 @@
 				6CCCB20E29AB382500557CC6 /* BoxButton.swift in Sources */,
 				6C42DE55296FDDE500966528 /* MainTabBarViewController.swift in Sources */,
 				6CDD19E12975119F00EA0982 /* Film.swift in Sources */,
+				6CCDC0C929B918C700677F2F /* MyListViewViewModel.swift in Sources */,
 				6C2F9F1C29B630B100A057E9 /* MyList.swift in Sources */,
 				6C0D670A29AE0EEF00A5C0B2 /* EditProfileViewController.swift in Sources */,
 				6CC41BAC29ACF101000F7533 /* ProfilesCollectionViewCell.swift in Sources */,

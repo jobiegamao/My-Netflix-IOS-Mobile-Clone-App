@@ -15,7 +15,7 @@ class RemindMeButton: ButtonImageAndText {
 	
 	init() {
 		super.init(text: "Remind Me", image: UIImage(systemName: "bell"))
-		print(isSelected, "remindmebutton")
+	
 		iconImageView.image = isSelected ? UIImage(systemName: "bell.fill") : UIImage(systemName: "bell")
 		addTarget(self, action: #selector(remindAction), for: .touchUpInside)
 		

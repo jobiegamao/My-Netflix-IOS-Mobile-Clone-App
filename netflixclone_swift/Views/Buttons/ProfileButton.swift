@@ -15,17 +15,17 @@ class ProfileButton: UIButton {
 	
 	weak var delegate: ProfileButtonDelegate?
 	
-//	var profileImage = UIImage(named: "profileicon")
+
 
 	override init(frame: CGRect = .zero) {
 		super.init(frame: frame)
 
-//		setImage(profileImage, for: .normal)
 		layer.cornerRadius = 10
+		clipsToBounds = true
 		
 		translatesAutoresizingMaskIntoConstraints = false
-		widthAnchor.constraint(equalToConstant: 30).isActive = true
-		heightAnchor.constraint(equalToConstant: 30).isActive = true
+		widthAnchor.constraint(equalToConstant: 35).isActive = true
+		heightAnchor.constraint(equalToConstant: 35).isActive = true
 		
 		addTarget(self, action: #selector(profileAction), for: .touchUpInside)
 		

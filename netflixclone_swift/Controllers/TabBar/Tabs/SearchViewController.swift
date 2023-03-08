@@ -118,10 +118,10 @@ extension SearchViewController: UISearchResultsUpdating, SearchResultsViewContro
 	}
 	
 	func searchResultsViewControllerDidTapCell(model: Film) {
-		
-		let vc =  FilmDetailsViewController()
-		vc.configure(model: model)
-		navigationController?.pushViewController(vc, animated: true)
+//		
+//		let vc =  FilmDetailsViewController()
+//		vc.configure(model: model)
+//		navigationController?.pushViewController(vc, animated: true)
 	}
 	
 	

@@ -18,23 +18,22 @@ class SearchResultsViewController: UIViewController {
 	
 	weak var delegate: SearchResultsViewControllerDelagate?
 	
-	let resultsCollectionView: UICollectionView = {
+	public lazy var resultsCollectionView: UICollectionView = {
 		let layout = UICollectionViewFlowLayout()
-		layout.minimumInteritemSpacing = 0.5
 		
-		let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-		collectionView.register(FilmCollectionViewCell.self, forCellWithReuseIdentifier: FilmCollectionViewCell.identifier)
+		let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
+		cv.register(FilmCollectionViewCell.self, forCellWithReuseIdentifier: FilmCollectionViewCell.identifier)
+		cv.dataSource = self
+		cv.delegate = self
 		
-		return collectionView
+		return cv
 	}()
 	
+	// MARK: - Main
     override func viewDidLoad() {
         super.viewDidLoad()
-		resultsCollectionView.dataSource = self
-		resultsCollectionView.delegate = self
-		view.addSubview(resultsCollectionView)
 		
-
+		view.addSubview(resultsCollectionView)
     }
 	
 	override func viewDidLayoutSubviews() {
@@ -43,9 +42,6 @@ class SearchResultsViewController: UIViewController {
 		
 	}
 	
-    
-
-    
 
 }
 
@@ -55,10 +51,7 @@ extension SearchResultsViewController: UICollectionViewDelegate, UICollectionVie
 	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 		guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FilmCollectionViewCell.identifier, for: indexPath) as? FilmCollectionViewCell else {return UICollectionViewCell() }
 		
-		let cellContent = films[indexPath.row]
-		let cellContentTitle = cellContent.title ?? cellContent.name ?? cellContent.original_title ?? cellContent.original_name ?? "NO TITLE"
-			
-		cell.configure(with: FilmViewModel(title: cellContentTitle , posterURL: cellContent.poster_path ?? "" ))
+		cell.configure(with: films[indexPath.row])
 		return cell
 	}
 	
@@ -83,9 +76,15 @@ extension SearchResultsViewController: UICollectionViewDelegate, UICollectionVie
 		
 	}
 	
+	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+		return 1.0
+	}
+	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+		return 1.0
+	}
 	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
 		
-		var spacing = 0.5
+		var spacing = 1.0
 		if let layout = collectionViewLayout as? UICollectionViewFlowLayout {
 			spacing = layout.minimumInteritemSpacing
 		}

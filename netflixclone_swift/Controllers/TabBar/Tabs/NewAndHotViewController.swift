@@ -23,6 +23,7 @@ class NewAndHotViewController: UIViewController{
 	}
 	
 	private let RemindMeViewModel = RemindMeViewViewModel()
+	private let MyListViewModel = MyListViewViewModel()
 	private var subscriptions: Set<AnyCancellable> = []
 	
 	private let sectionBarView = NewHotHeaderView()
@@ -105,6 +106,7 @@ class NewAndHotViewController: UIViewController{
 		print("viewWillAppear")
 		selectedProfile = AppSettings.selectedProfile
 		RemindMeViewModel.retrieveRemindMeFilms()
+		MyListViewModel.retrieveMyListFilms()
 	}
 	
 	
@@ -115,6 +117,14 @@ class NewAndHotViewController: UIViewController{
 			print("table reloaded")
 			DispatchQueue.main.async {
 				self?.VCTable.reloadSections(IndexSet(integer: 0), with: .automatic)
+			}
+		}
+		.store(in: &subscriptions)
+		
+		MyListViewModel.$myListFilms.sink { [weak self] _ in
+			print("table reloaded")
+			DispatchQueue.main.async {
+				self?.VCTable.reloadSections(IndexSet(integersIn: 1...3), with: .automatic)
 			}
 		}
 		.store(in: &subscriptions)
@@ -239,6 +249,10 @@ extension NewAndHotViewController: UITableViewDelegate, UITableViewDataSource {
 			case 1:
 				let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! PopularTableViewCell
 				guard let filmModel = films[indexPath.section]?[indexPath.row] else { return UITableViewCell() }
+				
+				let myListSelected = MyListViewModel.myListFilms.contains(where: {$0.id == filmModel.id})
+				
+				cell.configureTabView(model: filmModel, myListSelected)
 				cell.configureDetails(with: filmModel)
 				cell.selectionStyle = .none
 				return cell
@@ -246,6 +260,10 @@ extension NewAndHotViewController: UITableViewDelegate, UITableViewDataSource {
 			default:
 				let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! Top10TableViewCell
 				guard let filmModel = films[indexPath.section]?[indexPath.row] else { return UITableViewCell() }
+				
+				let myListSelected = MyListViewModel.myListFilms.contains(where: {$0.id == filmModel.id})
+				
+				cell.configureTabView(model: filmModel, myListSelected)
 				cell.configureDetails(with: filmModel, top: indexPath.row + 1)
 				cell.selectionStyle = .none
 				return cell

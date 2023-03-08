@@ -24,6 +24,7 @@ class PopularTableViewCell: UITableViewCell {
 	private let btn2 = MyListButton()
 	private let btn3 = PlaySmallButton()
 	
+	// MARK: - Main
 	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
 		super.init(style: style, reuseIdentifier: reuseIdentifier)
 		contentView.addSubview(webView)
@@ -37,10 +38,8 @@ class PopularTableViewCell: UITableViewCell {
 		
 	}
 	
-	
+	// MARK: - Public Configure Method
 	public func configureDetails(with model: Film){
-		
-		configureTabView(model: model)
 		
 		guard let selectedTitle = model.name ?? model.title ?? model.original_title ?? model.original_name else {return}
 		reusable.setWebViewRequest(selectedTitle: selectedTitle, model: model)
@@ -57,11 +56,12 @@ class PopularTableViewCell: UITableViewCell {
 		
 	}
 	
-	private func configureTabView(model: Film){
+	public func configureTabView(model: Film, _ myListSelected: Bool){
 		
 		btn1.filmModel = model
 		
 		btn2.filmModel = model
+		btn2.isSelected = myListSelected
 		
 		btn3.filmModel = model
 		
@@ -70,6 +70,7 @@ class PopularTableViewCell: UITableViewCell {
 		]
 	}
 	
+	// MARK: - Private Methods
 	private func applyConstraints(){
 		NSLayoutConstraint.activate([
 			webView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
